@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import List from './ListComponent'; //NC example is directory
+import List from './ListComponent';
 import { DATA } from '../shared/data';
+import Header from './HeaderComponent';
+import Footer from './FooterComponent';
 
 //Container component that will be parent to presentational components
 class Main extends Component {
@@ -13,7 +15,11 @@ class Main extends Component {
 
     render() {
         return (
-            <List data={this.state.data} /> //NC example is directory
+            <>
+                <Header />
+                <List data={this.state.data} />
+                <Footer />
+            </>
         )
     }
 }
