@@ -1,18 +1,23 @@
+//Example "itemArray", to be replaced with state in "MainComponent"
 export const DATA = [
     {
         storeName: "Aldi",
-        data: ["Banana", "Grapes", "Peanuts"]
+        item:"Banana",
+        isChecked: false
     },
     {
         storeName: "GreenStar",
-        data: ["Oatmilk", "Dandelion Greens", "Coffee"]
+        item:"Greens",
+        isChecked: false    
     },
     {
         storeName: "Tops",
-        data: ["Dinner Bread", "Fake Butter", "Beer"]
+        item:"Bread",
+        isChecked: false    
     },
     {
         storeName: "Any",
-        data: ["Floor Cleaner", "Soap"]
+        item:"Dish Soap",
+        isChecked: false    
     }
   ];

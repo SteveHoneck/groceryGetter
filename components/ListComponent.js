@@ -1,31 +1,17 @@
 import React from 'react';
-import { Text, SectionList } from 'react-native';
-import { ListItem } from 'react-native-elements';
+import { Text, View, StyleSheet } from 'react-native';
+import ListItem from './ListItemComponent';
 
-function List(props) {
-
-    const renderListItem = ({ item }) => { //An object is passed to this function from "renderItem" within <SectionList>. Destructure "item" from the object 
+function List(props) { //receives "itemArray" & "checkBoxToggle" as props from main, passes each item in the array to "ListItemComponent"
+    list = props.itemArray.map ( item => { //map function, add filter and chain to map to group by store
         return (
-            <ListItem>
-                <ListItem.CheckBox />
-                <ListItem.Content>
-                    <ListItem.Title>{item}</ListItem.Title>
-                </ListItem.Content>
-            </ListItem>
+            <ListItem item={item}
+            
+            />
         )
-    }
+    })
 
-    return (
-        <SectionList 
-            sections={props.data} //Where the <SectionList> is getting it's data from, it is expecting an object that contains an array named "data". <SectionList> iterates (like "map") through every index in the "data" array and runs whatever callback is in "renderItem".
-            keyExtractor={(item, index) => item + index} //Sets a unique key for each item so React can track if the item has changed. Key is set as the unique combination of the current item and it's index within the "data" array
-            renderItem={renderListItem} //Specifies how to render each item in the list. Default behavior of <SectionList> is to pass "renderItem" an object with a bunch of properties and passes that object to the callback function "renderItem" that is defined above. Whatever is in the current index of the "data" array is named "item" within that object.
-            renderSectionHeader={({ section: { storeName } }) => (
-                <Text>{storeName}</Text>
-            )}
-        />
-    );
-
+    return list;
 }
 
 export default List;
