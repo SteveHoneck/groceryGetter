@@ -8,7 +8,8 @@ const ListItem = (props) => { //props will be "checkBoxToggle" function and one 
 
     return(
         <View>
-            <CheckBox
+            <CheckBox 
+                containerStyle={styles.checkBoxRow}
                 title={props.itemObject.item} //Use the "item" value from the "itemObject" passed from the "map" method as the title for the checkbox
                 checked={props.itemObject.isChecked} //Use the "isChecked" value from the "itemObject" passed from the "map" method as the true or false for <CheckBox>'s checked value
                 onPress={() => props.checkBoxToggle(props.itemObject.id)} //run the "checkBoxToggle" function that was passed from the "ListComponent" <ListItem> call and give the function the value from the "itemObject"'s "id" value as an argument 
@@ -20,7 +21,12 @@ const ListItem = (props) => { //props will be "checkBoxToggle" function and one 
 
 
 const styles = StyleSheet.create({
-
+    checkBoxRow: { //Make list of checkboxes more tightly packed
+        paddingTop: 5,
+        paddingBottom: 5,
+        marginTop: 2.5,
+        marginBottom: 2.5
+    }
 })
 
 
