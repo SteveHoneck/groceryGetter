@@ -32,12 +32,13 @@ class Main extends Component {
         //update the array with the new changed object (splice to remove and splice to insert, or just copy whole array)
         updatedItemArray.splice(targetObjectIndex, 1); //remove the ''old'' object (the object with the "isChecked" value unchanged) from the copy of the state "itemArray"
         updatedItemArray.splice(targetObjectIndex, 0, targetObject); //put the ''new'' object (the object with the "isChecked" value that has been updated) into the copy of the state "itemArray"
-        this.setState({updatedItemArray}); //replace the current "itemArray" in state with the "updatedItemArray"
+        this.setState({itemArray: updatedItemArray}); //replace the current "itemArray" in state with the "updatedItemArray"
     }
 
     //Function "deleteCheckedItems"  to delete all checked items (make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent"
     deleteCheckedItems = () => { 
-        alert('button pressed')
+        const updatedItemArray = this.state.itemArray.filter( obj => obj.isChecked === false ); //Make a copy of the "itemArray" in state, rename it "updatedItemArray", filters the"updateItemArray" (which at this point is what is currently in state) for all objects that have "isChecked" property as "false". This returns an array of objects that do not have their check boxes marked.
+        this.setState({itemArray: updatedItemArray}); //replace the current "itemArray" in state with the "updatedItemArray" i.e. an array of all items that are unchecked
     }
 
     //Function "addItemSubmit" to submit info from "addItem" modal  (make arrow function so don't have to bind    addItemSubmit () => {...}   )

@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { Button, Icon } from 'react-native-elements'
 
-const FooterButton = ({title, icon, deleteCheckedItems}) => { //Receives the "title", "icon" name, and "deletCheckedItems" function from "FooterComponent"
+const FooterButton = ({title, icon, onPressFunction}) => { //Receives the "title", "icon" name, and "onPressFunction" (which is either "deletCheckedItems" function or "addItemModal" function) from "FooterComponent"
     return (
         <Button
         icon = {
@@ -14,7 +14,7 @@ const FooterButton = ({title, icon, deleteCheckedItems}) => { //Receives the "ti
         }
         iconRight
         title = {title}
-        onPress = { () => deleteCheckedItems() }
+        onPress = { () => onPressFunction() }
         buttonStyle = {styles.button}
         />
     )
