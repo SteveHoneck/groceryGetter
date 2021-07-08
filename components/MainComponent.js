@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import List from './ListComponent';
 import { DATA } from '../shared/data';
+import { STORES } from '../shared/stores';
+import List from './ListComponent';
 import Header from './HeaderComponent';
 import Footer from './FooterComponent';
 import CustomButton from './CustomButtonComponent';
-import { View, ScrollView, StyleSheet, Modal, Text } from 'react-native';
+import StoreList from './StoreListComponent';
+import { View, ScrollView, StyleSheet, Modal, Text, TextInput, ToastAndroid } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
@@ -14,9 +16,11 @@ class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            itemArray: DATA, //Replace with empty array when implement "addItem" modal
-            modalVisible: false
-            //Add state for input from "addItem" modal
+            itemArray: [], //Initial item array
+            storesArray: STORES,//Replace with empty array when implement "addStores"            
+            modalVisible: false,
+            addItemInput: '',//Add state for input from "addItem" modal
+            textInputPlaceholder: 'Enter item' //State for resetting the "placeholder" value when "addItem" <Modal> is activated (could be a constant below instead of state?)
             //Add state for input from "addStore" modal
         };
     }
@@ -46,11 +50,31 @@ class Main extends Component {
     //Function to change the current state of the modal's visibility
     toggleModal = () => {
         this.setState({modalVisible: !this.state.modalVisible});
+        this.setState({textInputPlaceholder: 'Enter item', addItemInput: ''}) //Resets the <Input> text field in the "addItem" <Modal>
     }
 
-    //Function "addItemSubmit" to submit info from "addItem" modal  (make arrow function so don't have to bind    addItemSubmit () => {...}   )
+    //Function "addItemSubmit" to submit info from "addItem" modal  (make arrow function so don't have to bind)
     addItemSubmit = () => {
-        alert('Item submitted')
+        if (this.state.addItemInput) { //If the user has not entered any text, "addItemInput" will be an empty string which is FALSY and the "if" statement will not be entered (a blank item will not be added)
+            this.state.itemArray.push({
+                id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. 
+                storeName: 'From Selection',
+                item: this.state.addItemInput, //Could submit "value" from text <Input> field since it is also defined as the sate of "addItemInput", not sure which method is better. 
+                isChecked: false
+            })
+            ToastAndroid.showWithGravity( //Notify user that item was added successfully
+                `${this.state.addItemInput} added!`,
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER
+            );
+            this.setState({textInputPlaceholder: 'Enter item', addItemInput: ''}) //Resets the <Input> text field in the "addItem" <Modal>
+        } else {
+            ToastAndroid.showWithGravity( //Notify user that item was not added
+                'Please add an item!',
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER
+            );
+        }
     } 
 
     //Function "addStoreSubmit" to submit info from "addStore" modal  (make arrow function so don't have to bind    addStoreSubmit () => {...}   )
@@ -64,7 +88,7 @@ class Main extends Component {
                         <Header />
                     </View>
                     
-                    <ScrollView>
+                    <ScrollView /*!!!!GETS STUCK BEHIND FOOTER, NEED TO FIX!!!!*/>
                         <List itemArray={this.state.itemArray} checkBoxToggle={this.checkBoxToggle} /> 
                     </ScrollView>
                     
@@ -72,19 +96,28 @@ class Main extends Component {
                         <Footer deleteCheckedItems={this.deleteCheckedItems} toggleModal={this.toggleModal}/>
                     </View>
                     
-                    <View > 
+                    <View style={{flex: 1}}> 
                         <Modal
                             animationType={'slide'} //Built in, there are a few options
                             transparent={false} //Makes the modal opaque
-                            visible={this.state.modalVisible} //Visibility" will be set to what is stored in the state "modalVisible"
+                            visible={this.state.modalVisible} //Visibility will be set to what is stored in the state "modalVisible"
                             onRequestClose={() => this.toggleModal()} //Funciton that will be run when hardware back button is pressed
                         >
-                            <View>
-                                <Text>Input form</Text>
-                            </View>
-                            <View>
-                                <CustomButton title={'Add Item'} icon={'plus'} onPressFunction={this.addItemSubmit} />
-                                <CustomButton title={'Back'} icon={'chevron-left'} onPressFunction={this.toggleModal} />
+                            <View style={{flex: .5, marginTop: '25%'}}>
+                                <View style={{flex: 1, alignItems: 'center'}}>
+                                    <TextInput 
+                                        placeholder={this.state.textInputPlaceholder} //Text to show when nothing in entered in the text field
+                                        onChangeText={text => this.setState({addItemInput: text})} //When text is entered into the input field, "onChangeText" assigns that text to the variable "text", passes it to the function that sets the state value of "addItemInput" to that text. The input field WILL accept and display entered text WITHOUT "onChangeText"
+                                        value={this.state.addItemInput} //This is the value that will be shown and captured in the text input field. Initialized in state as an empty string so that the "placeholder" will show. Used in conjunction with "onChangeText" where "onChangeText" function sets the text input in state, "value" captures the state as the value that will be submitted. 
+                                    />
+                                </View>
+                                <View style={{flex: 3, alignItems: 'center'}}>
+                                    <StoreList storesArray={this.state.storesArray} />     
+                                </View>
+                                <View style={{flex: 3, alignItems: 'center'}}>
+                                    <CustomButton title={'Add Item'} icon={'plus'} onPressFunction={this.addItemSubmit} />
+                                    <CustomButton title={'Back'} icon={'chevron-left'} onPressFunction={this.toggleModal} />
+                                </View>
                             </View>
                         </Modal>
                     </View>
@@ -112,7 +145,7 @@ const styles = StyleSheet.create({
       height: 75,
       backgroundColor: 'green',
       justifyContent: 'center',
-      //position: 'absolute', 
+      position: 'absolute', //Needed to push footer to the bottom when the list of items is empty 
       bottom: 0
     }
   });
