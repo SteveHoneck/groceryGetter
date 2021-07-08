@@ -3,7 +3,8 @@ import List from './ListComponent';
 import { DATA } from '../shared/data';
 import Header from './HeaderComponent';
 import Footer from './FooterComponent';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import CustomButton from './CustomButtonComponent';
+import { View, ScrollView, StyleSheet, Modal, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
@@ -13,7 +14,8 @@ class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            itemArray: DATA //Replace with empty array when implement "addItem" modal
+            itemArray: DATA, //Replace with empty array when implement "addItem" modal
+            modalVisible: false
             //Add state for input from "addItem" modal
             //Add state for input from "addStore" modal
         };
@@ -41,7 +43,15 @@ class Main extends Component {
         this.setState({itemArray: updatedItemArray}); //replace the current "itemArray" in state with the "updatedItemArray" i.e. an array of all items that are unchecked
     }
 
+    //Function to change the current state of the modal's visibility
+    toggleModal = () => {
+        this.setState({modalVisible: !this.state.modalVisible});
+    }
+
     //Function "addItemSubmit" to submit info from "addItem" modal  (make arrow function so don't have to bind    addItemSubmit () => {...}   )
+    addItemSubmit = () => {
+        alert('Item submitted')
+    } 
 
     //Function "addStoreSubmit" to submit info from "addStore" modal  (make arrow function so don't have to bind    addStoreSubmit () => {...}   )
 
@@ -49,15 +59,36 @@ class Main extends Component {
         return ( // <List> is passed the array of items "itemArray", and the function to toggle the checkbox "checkBoxToggle" to the "List" component. <Footer> is passed the "deleteCheckedItems" function. 
             <SafeAreaView style={styles.wrapper}>
                 <View style={styles.wrapper}>
+                    
                     <View style={styles.header}> 
                         <Header />
                     </View>
+                    
                     <ScrollView>
                         <List itemArray={this.state.itemArray} checkBoxToggle={this.checkBoxToggle} /> 
                     </ScrollView>
+                    
                     <View style={styles.footer}>
-                        <Footer deleteCheckedItems={this.deleteCheckedItems} />
+                        <Footer deleteCheckedItems={this.deleteCheckedItems} toggleModal={this.toggleModal}/>
                     </View>
+                    
+                    <View > 
+                        <Modal
+                            animationType={'slide'} //Built in, there are a few options
+                            transparent={false} //Makes the modal opaque
+                            visible={this.state.modalVisible} //Visibility" will be set to what is stored in the state "modalVisible"
+                            onRequestClose={() => this.toggleModal()} //Funciton that will be run when hardware back button is pressed
+                        >
+                            <View>
+                                <Text>Input form</Text>
+                            </View>
+                            <View>
+                                <CustomButton title={'Add Item'} icon={'plus'} onPressFunction={this.addItemSubmit} />
+                                <CustomButton title={'Back'} icon={'chevron-left'} onPressFunction={this.toggleModal} />
+                            </View>
+                        </Modal>
+                    </View>
+               
                 </View>
             </SafeAreaView>
         )
@@ -85,6 +116,7 @@ const styles = StyleSheet.create({
       bottom: 0
     }
   });
+
 
 
 export default Main;

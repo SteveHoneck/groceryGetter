@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { Button, Icon } from 'react-native-elements'
 
-const FooterButton = ({title, icon, onPressFunction}) => { //Receives the "title", "icon" name, and "onPressFunction" (which is either "deletCheckedItems" function or "addItemModal" function) from "FooterComponent"
+const CustomButton = ({title, icon, onPressFunction}) => { //Receives the "title", "icon" name, and "onPressFunction" (which is either "deletCheckedItems" function or "addItemModal" function) from "FooterComponent"
     return (
         <Button
         icon = {
@@ -32,4 +32,4 @@ const styles = StyleSheet.create({
   });
 
 
-export default FooterButton;
+export default CustomButton;
