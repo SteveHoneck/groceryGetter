@@ -8,6 +8,7 @@ import CustomButton from './CustomButtonComponent';
 import StoreList from './StoreListComponent';
 import { View, ScrollView, StyleSheet, Modal, Text, TextInput, ToastAndroid } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Alert } from 'react-native';
 
 
 //Container component that will be parent to presentational components. Holds "itemArray" and functions that operate on the array and passes them to the various components
@@ -20,7 +21,8 @@ class Main extends Component {
             storesArray: STORES,//Replace with empty array when implement "addStores"            
             modalVisible: false,
             addItemInput: '',//Add state for input from "addItem" modal
-            textInputPlaceholder: 'Enter item' //State for resetting the "placeholder" value when "addItem" <Modal> is activated (could be a constant below instead of state?)
+            textInputPlaceholder: 'Enter item', //State for resetting the "placeholder" value when "addItem" <Modal> is activated (could be a constant below instead of state?)
+            selectedStore: null //State for holding the text string of store selected in "addItemModal"
             //Add state for input from "addStore" modal
         };
     }
@@ -41,6 +43,10 @@ class Main extends Component {
         this.setState({itemArray: updatedItemArray}); //replace the current "itemArray" in state with the "updatedItemArray"
     }
 
+    storeSelect = (storeName) => {
+        this.setState({selectedStore: storeName});
+    }
+
     //Function "deleteCheckedItems"  to delete all checked items (make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent"
     deleteCheckedItems = () => { 
         const updatedItemArray = this.state.itemArray.filter( obj => obj.isChecked === false ); //Make a copy of the "itemArray" in state, rename it "updatedItemArray", filters the"updateItemArray" (which at this point is what is currently in state) for all objects that have "isChecked" property as "false". This returns an array of objects that do not have their check boxes marked.
@@ -58,7 +64,7 @@ class Main extends Component {
         if (this.state.addItemInput) { //If the user has not entered any text, "addItemInput" will be an empty string which is FALSY and the "if" statement will not be entered (a blank item will not be added)
             this.state.itemArray.push({
                 id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. 
-                storeName: 'From Selection',
+                storeName: this.state.selectedStore, //
                 item: this.state.addItemInput, //Could submit "value" from text <Input> field since it is also defined as the sate of "addItemInput", not sure which method is better. 
                 isChecked: false
             })
@@ -112,7 +118,8 @@ class Main extends Component {
                                     />
                                 </View>
                                 <View style={{flex: 3, alignItems: 'center'}}>
-                                    <StoreList storesArray={this.state.storesArray} />     
+                                    <Text>Select Store</Text>
+                                    <StoreList storesArray={this.state.storesArray} storeSelect={this.storeSelect} />     
                                 </View>
                                 <View style={{flex: 3, alignItems: 'center'}}>
                                     <CustomButton title={'Add Item'} icon={'plus'} onPressFunction={this.addItemSubmit} />
