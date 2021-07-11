@@ -41,9 +41,24 @@ class Main extends Component {
         this.setState({itemArray: updatedItemArray}); //replace the current "itemArray" in state with the "updatedItemArray"
     }
 
-    //Function to change the current state of the "selectedStore". "selectedStore" will be a property of a new item when the item is added ((make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent")
-    storeSelect = (storeName) => { //Receives the "storeName" (and renames it "storeName") property as an argument from the "storesArray" object that was selected from "StoreListItemComponent"
-        this.setState({selectedStore: storeName}); //replace the current string (or null) that is in "selectedStore" state
+    //Function to change the current state of the property "selectedStore" and to change the style properties of the selected store within "StoreListItemComponent". "selectedStore" will be a property of a new item when the item is added ((make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent")
+    storeSelect = (storeName, id) => { //Receives the "storeName" (and renames it "storeName") and "id" properties as arguments from the "storesArray" object that was selected from "StoreListItemComponent"
+        this.setState({selectedStore: storeName}); //replace the current string (or null) that is in "selectedStore" state which will be submitted as the "storeName" property in the "addItemSubmit" object
+        
+        let updatedStoresArray = this.state.storesArray;//Define "updatedStoresArray" as a variable that can be re-assigned, give it initial value of the "storesArray" that is currently in state.
+        updatedStoresArray.map( storeObject => { //Iterates through the "updatedStoresArray" (which is an array of objects) and performs the following code on each object which is renamed to "storeObject"
+                if (storeObject.id === id) { //If the current "storeObject" being iterated over matches the "id" that was passed in from the "StoreListItemComponent", change the following two style attributes that will make it look selected. Getting spread syntax to work will take more research....
+                    storeObject.backgroundColor = "grey";
+                    storeObject.color = 'white';
+                } else { //If the current "storeObject" being iterated over does not match the "id" that was passed in from the "StoreListItemComponent", change the following two style attributes that will make it look un-selected (need to perform this step to reset the text properties so it does not look like multiple things are selected). Getting spread syntax to work will take more research....
+                    storeObject.backgroundColor = "white";
+                    storeObject.color = 'black';
+                }
+                return storeObject //Returns the "storeObject" of the current iteration to the new array "updatedStoresArray" (return can't be inside "if" or "else" block or the function will stop running as soon as the firt object enters one of those blocks)
+            }
+        )
+
+        this.setState({storesArray: updatedStoresArray}); //replace "storesArray" in state with the "updatedStoresArray" which has the selected store object with styles that make it look selected
     }
 
     //Function "deleteCheckedItems"  to delete all checked items (make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent")
