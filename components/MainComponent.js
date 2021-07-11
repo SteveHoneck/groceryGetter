@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { DATA } from '../shared/data';
 import { STORES } from '../shared/stores';
 import List from './ListComponent';
 import Header from './HeaderComponent';
@@ -8,10 +7,9 @@ import CustomButton from './CustomButtonComponent';
 import StoreList from './StoreListComponent';
 import { View, ScrollView, StyleSheet, Modal, Text, TextInput, ToastAndroid } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Alert } from 'react-native';
 
 
-//Container component that will be parent to presentational components. Holds "itemArray" and functions that operate on the array and passes them to the various components
+//Container component that will be parent to presentational components. Holds "itemArray", "storesArray", other state values, and functions that operate on the array/state and passes them to the various components
 
 class Main extends Component {
     constructor(props) {
@@ -20,7 +18,7 @@ class Main extends Component {
             itemArray: [], //Initial item array
             storesArray: STORES,//Replace with empty array when implement "addStores"            
             modalVisible: false,
-            addItemInput: '',//Add state for input from "addItem" modal
+            addItemInput: '',//State for input from "addItem" modal
             textInputPlaceholder: 'Enter item', //State for resetting the "placeholder" value when "addItem" <Modal> is activated (could be a constant below instead of state?)
             selectedStore: null //State for holding the text string of store selected in "addItemModal"
             //Add state for input from "addStore" modal
@@ -43,11 +41,12 @@ class Main extends Component {
         this.setState({itemArray: updatedItemArray}); //replace the current "itemArray" in state with the "updatedItemArray"
     }
 
-    storeSelect = (storeName) => {
-        this.setState({selectedStore: storeName});
+    //Function to change the current state of the "selectedStore". "selectedStore" will be a property of a new item when the item is added ((make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent")
+    storeSelect = (storeName) => { //Receives the "storeName" (and renames it "storeName") property as an argument from the "storesArray" object that was selected from "StoreListItemComponent"
+        this.setState({selectedStore: storeName}); //replace the current string (or null) that is in "selectedStore" state
     }
 
-    //Function "deleteCheckedItems"  to delete all checked items (make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent"
+    //Function "deleteCheckedItems"  to delete all checked items (make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent")
     deleteCheckedItems = () => { 
         const updatedItemArray = this.state.itemArray.filter( obj => obj.isChecked === false ); //Make a copy of the "itemArray" in state, rename it "updatedItemArray", filters the"updateItemArray" (which at this point is what is currently in state) for all objects that have "isChecked" property as "false". This returns an array of objects that do not have their check boxes marked.
         this.setState({itemArray: updatedItemArray}); //replace the current "itemArray" in state with the "updatedItemArray" i.e. an array of all items that are unchecked
@@ -64,7 +63,7 @@ class Main extends Component {
         if (this.state.addItemInput) { //If the user has not entered any text, "addItemInput" will be an empty string which is FALSY and the "if" statement will not be entered (a blank item will not be added)
             this.state.itemArray.push({
                 id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. 
-                storeName: this.state.selectedStore, //
+                storeName: this.state.selectedStore, //Set the "storeName" value of the item being added as what is currently in the "selectedStore" state
                 item: this.state.addItemInput, //Could submit "value" from text <Input> field since it is also defined as the sate of "addItemInput", not sure which method is better. 
                 isChecked: false
             })
@@ -119,10 +118,10 @@ class Main extends Component {
                                 </View>
                                 <View style={{flex: 3, alignItems: 'center'}}>
                                     <Text>Select Store</Text>
-                                    <StoreList storesArray={this.state.storesArray} storeSelect={this.storeSelect} />     
+                                    <StoreList storesArray={this.state.storesArray} storeSelect={this.storeSelect} /*Pass the "storesArray" and "storeSelect" function to the <StoreList> component which will pass each object in the "storesArray" and the "storeSelect" function to the <StoreItem> component*//>     
                                 </View>
                                 <View style={{flex: 3, alignItems: 'center'}}>
-                                    <CustomButton title={'Add Item'} icon={'plus'} onPressFunction={this.addItemSubmit} />
+                                    <CustomButton title={'Add Item'} icon={'plus'} onPressFunction={this.addItemSubmit} /*Pass a "title", "icon", and the "addItemSubmit" to the <CustomButton> component. "addItemSubmit" renamed to general "onPressFunction" which is accepted by <CustomButton> so that any function can be passed to <CustomButton> without having to change <CustomButton> structure*//>
                                     <CustomButton title={'Back'} icon={'chevron-left'} onPressFunction={this.toggleModal} />
                                 </View>
                             </View>
