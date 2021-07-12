@@ -6,6 +6,7 @@ import Footer from './FooterComponent';
 import CustomButton from './CustomButtonComponent';
 import StoreList from './StoreListComponent';
 import { View, ScrollView, StyleSheet, Modal, Text, TextInput, ToastAndroid } from 'react-native';
+import { Overlay } from 'react-native-elements'
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
@@ -16,12 +17,13 @@ class Main extends Component {
         super(props);
         this.state = {
             itemArray: [], //Initial item array
-            storesArray: STORES,//Replace with empty array when implement "addStores"            
-            modalVisible: false,
-            addItemInput: '',//State for input from "addItem" modal
+            storesArray: [],//Initial stores array           
+            addItemModalVisible: false,
+            addInput: '',//State for input from "addItem" modal and "addStore" overlay. This same state can be used for both because they are never active at the same time
             textInputPlaceholder: 'Enter item', //State for resetting the "placeholder" value when "addItem" <Modal> is activated (could be a constant below instead of state?)
-            selectedStore: null //State for holding the text string of store selected in "addItemModal"
-            //Add state for input from "addStore" modal
+            selectedStore: null, //State for holding the text string of store selected in "addItemModal"
+            addStoreOverlayVisible: false, //
+            addStoreTextInputPlaceholder: 'Enter store'//State for resetting the "placeholder" value when "addStore" <Overlay> is activated (could be a constant below instead of state?)
         };
     }
 
@@ -67,37 +69,78 @@ class Main extends Component {
         this.setState({itemArray: updatedItemArray}); //replace the current "itemArray" in state with the "updatedItemArray" i.e. an array of all items that are unchecked
     }
 
-    //Function to change the current state of the modal's visibility
-    toggleModal = () => {
-        this.setState({modalVisible: !this.state.modalVisible});
-        this.setState({textInputPlaceholder: 'Enter item', addItemInput: ''}) //Resets the <Input> text field in the "addItem" <Modal>
+    //Function to change the current state of the Add Item modal's visibility
+    toggleAddItemModal = () => {
+        this.setState({addItemModalVisible: !this.state.addItemModalVisible});
+        this.setState({textInputPlaceholder: 'Enter item', addInput: ''}) //Resets the <Input> text field in the "addItem" <Modal>
     }
 
     //Function "addItemSubmit" to submit info from "addItem" modal  (make arrow function so don't have to bind)
     addItemSubmit = () => {
-        if (this.state.addItemInput) { //If the user has not entered any text, "addItemInput" will be an empty string which is FALSY and the "if" statement will not be entered (a blank item will not be added)
-            this.state.itemArray.push({
+        if (this.state.addInput) { //If the user has not entered any text, "addInput" will be an empty string which is FALSY and the "if" statement will not be entered (a blank item will not be added)
+            this.state.itemArray.push(
+                {
                 id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. 
                 storeName: this.state.selectedStore, //Set the "storeName" value of the item being added as what is currently in the "selectedStore" state
-                item: this.state.addItemInput, //Could submit "value" from text <Input> field since it is also defined as the sate of "addItemInput", not sure which method is better. 
+                item: this.state.addInput, //Could submit "value" from text <Input> field since it is also defined as the state of "addInput", not sure which method is better. 
                 isChecked: false
-            })
-            ToastAndroid.showWithGravity( //Notify user that item was added successfully
-                `${this.state.addItemInput} added!`,
+                }
+            )
+            ToastAndroid.showWithGravityAndOffset( //Notify user that item was added successfully
+                `${this.state.addInput} added!`,
                 ToastAndroid.SHORT,
-                ToastAndroid.CENTER
+                ToastAndroid.TOP,
+                0,
+                100 //Y-offset of Toast, set to be close to typing area so User notices it
             );
-            this.setState({textInputPlaceholder: 'Enter item', addItemInput: ''}) //Resets the <Input> text field in the "addItem" <Modal>
+            this.setState({textInputPlaceholder: 'Enter item', addInput: ''}) //Resets the <Input> text field in the "addItem" <Modal>
         } else {
-            ToastAndroid.showWithGravity( //Notify user that item was not added
+            ToastAndroid.showWithGravityAndOffset( //Notify user that item was not added
                 'Please add an item!',
                 ToastAndroid.SHORT,
-                ToastAndroid.CENTER
+                ToastAndroid.TOP,
+                0,
+                100 //Y-offset of Toast, set to be close to typing area so User notices it
             );
         }
     } 
 
-    //Function "addStoreSubmit" to submit info from "addStore" modal  (make arrow function so don't have to bind    addStoreSubmit () => {...}   )
+    //Function to change the current state of the Add Store overlay's visibility
+    toggleAddStoreOverlay = () => {
+        this.setState({addStoreOverlayVisible: !this.state.addStoreOverlayVisible});
+        this.setState({addStoreTextInputPlaceholder: 'Enter store', addInput: ''}) //Resets the <Input> text field in the "addStore" <Overlay>
+    }
+
+    //Function "addStoreSubmit" to submit info from "addStore" <Overlay>  (make arrow function so don't have to bind)
+    addStoreSubmit = () => {
+        if (this.state.addInput) { //If the user has not entered any text, "addInput" will be an empty string which is FALSY and the "if" statement will not be entered (a blank item will not be added)
+            this.state.storesArray.push(
+                {
+                    id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. 
+                    storeName: this.state.addInput,//Could submit "value" from text <Input> field since it is also defined as the state of "addInput", not sure which method is better. 
+                    backgroundColor: "white", //Default style to make the store appear un-selected when rendered in <StoreList>
+                    color: 'black' //Default style to make the store appear un-selected when rendered in <StoreList>
+                }
+            )
+            ToastAndroid.showWithGravityAndOffset( //Notify user that store was added successfully
+                `${this.state.addInput} added!`,
+                ToastAndroid.SHORT,
+                ToastAndroid.TOP,
+                0,
+                100 //Y-offset of Toast, set to be close to typing area so User notices it
+            )
+            this.setState({addStoretextInputPlaceholder: 'Enter store', addInput: ''}) //Resets the <Input> text field in the "addStore" <Overlay>
+            this.toggleAddStoreOverlay() //Close "addStore" overlay because not often will more than one store be added at a time
+        } else {
+            ToastAndroid.showWithGravityAndOffset( //Notify user that store was not added
+                'Please add a store!',
+                ToastAndroid.SHORT,
+                ToastAndroid.TOP,
+                0,
+                100 //Y-offset of Toast, set to be close to typing area so User notices it
+            );
+        }
+    }
 
     render() {
         return ( // <List> is passed the array of items "itemArray", and the function to toggle the checkbox "checkBoxToggle" to the "List" component. <Footer> is passed the "deleteCheckedItems" function. 
@@ -105,7 +148,7 @@ class Main extends Component {
                 <View style={styles.wrapper}>
                     
                     <View style={styles.header}> 
-                        <Header />
+                        <Header toggleAddStoreOverlay={this.toggleAddStoreOverlay} />
                     </View>
                     
                     <ScrollView /*!!!!GETS STUCK BEHIND FOOTER, NEED TO FIX!!!!*/>
@@ -113,22 +156,22 @@ class Main extends Component {
                     </ScrollView>
                     
                     <View style={styles.footer}>
-                        <Footer deleteCheckedItems={this.deleteCheckedItems} toggleModal={this.toggleModal}/>
+                        <Footer deleteCheckedItems={this.deleteCheckedItems} toggleAddItemModal={this.toggleAddItemModal}/>
                     </View>
                     
                     <View style={{flex: 1}}> 
                         <Modal
                             animationType={'slide'} //Built in, there are a few options
                             transparent={false} //Makes the modal opaque
-                            visible={this.state.modalVisible} //Visibility will be set to what is stored in the state "modalVisible"
-                            onRequestClose={() => this.toggleModal()} //Funciton that will be run when hardware back button is pressed
+                            visible={this.state.addItemModalVisible} //Visibility will be set to what is stored in the state "addItemModalVisible"
+                            onRequestClose={() => this.toggleAddItemModal()} //Funciton that will be run when hardware back button is pressed
                         >
                             <View style={{flex: .5, marginTop: '25%'}}>
                                 <View style={{flex: 1, alignItems: 'center'}}>
                                     <TextInput 
                                         placeholder={this.state.textInputPlaceholder} //Text to show when nothing in entered in the text field
-                                        onChangeText={text => this.setState({addItemInput: text})} //When text is entered into the input field, "onChangeText" assigns that text to the variable "text", passes it to the function that sets the state value of "addItemInput" to that text. The input field WILL accept and display entered text WITHOUT "onChangeText"
-                                        value={this.state.addItemInput} //This is the value that will be shown and captured in the text input field. Initialized in state as an empty string so that the "placeholder" will show. Used in conjunction with "onChangeText" where "onChangeText" function sets the text input in state, "value" captures the state as the value that will be submitted. 
+                                        onChangeText={text => this.setState({addInput: text})} //When text is entered into the input field, "onChangeText" assigns that text to the variable "text", passes it to the function that sets the state value of "addInput" to that text. The input field WILL accept and display entered text WITHOUT "onChangeText"
+                                        value={this.state.addInput} //This is the value that will be shown and captured in the text input field. Initialized in state as an empty string so that the "placeholder" will show. Used in conjunction with "onChangeText" where "onChangeText" function sets the text input in state, "value" captures the state as the value that will be submitted. 
                                     />
                                 </View>
                                 <View style={{flex: 3, alignItems: 'center'}}>
@@ -136,13 +179,39 @@ class Main extends Component {
                                     <StoreList storesArray={this.state.storesArray} storeSelect={this.storeSelect} /*Pass the "storesArray" and "storeSelect" function to the <StoreList> component which will pass each object in the "storesArray" and the "storeSelect" function to the <StoreItem> component*//>     
                                 </View>
                                 <View style={{flex: 3, alignItems: 'center'}}>
-                                    <CustomButton title={'Add Item'} icon={'plus'} onPressFunction={this.addItemSubmit} /*Pass a "title", "icon", and the "addItemSubmit" to the <CustomButton> component. "addItemSubmit" renamed to general "onPressFunction" which is accepted by <CustomButton> so that any function can be passed to <CustomButton> without having to change <CustomButton> structure*//>
-                                    <CustomButton title={'Back'} icon={'chevron-left'} onPressFunction={this.toggleModal} />
+                                    <CustomButton title={null} icon={'check'} onPressFunction={this.addItemSubmit} /*Pass a "title", "icon", and the "addItemSubmit" to the <CustomButton> component. "addItemSubmit" renamed to general "onPressFunction" which is accepted by <CustomButton> so that any function can be passed to <CustomButton> without having to change <CustomButton> structure. "title" is "null" because icon only is needed*//>
+                                    <CustomButton title={null} icon={'chevron-left'} onPressFunction={this.toggleAddItemModal} /*"title" is "null" because icon only is needed*//>
                                 </View>
                             </View>
                         </Modal>
                     </View>
                
+                    <View>
+                        <Overlay 
+                            isVisible={this.state.addStoreOverlayVisible}
+                            onBackdropPress={this.toggleAddStoreOverlay} //Function activated when space outside the overlay is touched
+                            animationType={'fade'} //Built in (from React Modal component), there are a few options
+                            transparent={true} //Makes the overlay backdrop transparent
+                            onRequestClose={() => this.toggleAddStoreOverlay()} //Funciton that will be run when hardware back button is pressed
+                            overlayStyle={styles.overlay} //Style of the actual overlay
+                        >
+                            <View>
+                                <Text>Add Store</Text>
+                                <TextInput
+                                    placeholder={this.state.addStoreTextInputPlaceholder}//Text to show when nothing in entered in the text field
+                                    onChangeText={text => this.setState({addInput: text})}//Operates in same manner as "addItem"
+                                    value={this.state.addInput}//Operates in same manner as "addItem"
+                                />
+                            </View>
+
+                            <View>
+                                <CustomButton title={null} icon={'check'} onPressFunction={this.addStoreSubmit} /*"title" is "null" because icon only is needed*//>
+                                <CustomButton title={null} icon={'chevron-left'} onPressFunction={this.toggleAddStoreOverlay} /*"title" is "null" because icon only is needed*//>
+                            </View>
+
+                        </Overlay>
+                    </View>
+
                 </View>
             </SafeAreaView>
         )
@@ -168,6 +237,9 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       position: 'absolute', //Needed to push footer to the bottom when the list of items is empty 
       bottom: 0
+    },
+    overlay: {
+
     }
   });
 

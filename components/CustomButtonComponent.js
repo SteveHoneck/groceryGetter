@@ -16,6 +16,7 @@ const CustomButton = ({title, icon, onPressFunction}) => { //Receives the "title
         title = {title}
         onPress = { () => onPressFunction() }
         buttonStyle = {styles.button}
+        titleStyle = {styles.title}
         />
     )
 } 
@@ -24,10 +25,14 @@ const styles = StyleSheet.create({
     button: {
       margin: 10,
       padding: 10,
-      width: 175
+      width: 175,
+      backgroundColor: "yellowgreen",
     },
     icon: {
         marginLeft: 20
+    },
+    title: {
+        color: "black"
     }
   });
 
