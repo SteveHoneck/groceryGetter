@@ -151,9 +151,7 @@ class Main extends Component {
                         <Header toggleAddStoreOverlay={this.toggleAddStoreOverlay} />
                     </View>
                     
-                    <ScrollView /*!!!!GETS STUCK BEHIND FOOTER, NEED TO FIX!!!!*/>
-                        <List itemArray={this.state.itemArray} checkBoxToggle={this.checkBoxToggle} /> 
-                    </ScrollView>
+                    <List itemArray={this.state.itemArray} storesArray={this.state.storesArray} checkBoxToggle={this.checkBoxToggle} /> 
                     
                     <View style={styles.footer}>
                         <Footer deleteCheckedItems={this.deleteCheckedItems} toggleAddItemModal={this.toggleAddItemModal}/>
