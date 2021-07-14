@@ -17,12 +17,12 @@ class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            itemArray: DATA, //Initial item array. Use DATA for pre-filled array, otherwise use []
-            storesArray: STORES,//Initial stores array. Use STORES for pre-filled array, otherwise use []          
+            itemArray: [], //Initial item array. Use DATA for pre-filled array, otherwise use []
+            storesArray: [],//Initial stores array. Use STORES for pre-filled array, otherwise use []          
             addItemModalVisible: false,
             addInput: '',//State for input from "addItem" modal and "addStore" overlay. This same state can be used for both because they are never active at the same time
             textInputPlaceholder: 'Enter item', //State for resetting the "placeholder" value when "addItem" <Modal> is activated (could be a constant below instead of state?)
-            selectedStore: null, //State for holding the text string of store selected in "addItemModal"
+            selectedStore: '', //State for holding the text string of storeName selected in "addItemModal"
             addStoreOverlayVisible: false, //
             addStoreTextInputPlaceholder: 'Enter store'//State for resetting the "placeholder" value when "addStore" <Overlay> is activated (could be a constant below instead of state?)
         };
@@ -46,7 +46,7 @@ class Main extends Component {
 
     //Function to change the current state of the property "selectedStore" and to change the style properties of the selected store within "StoreListItemComponent". "selectedStore" will be a property of a new item when the item is added ((make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent")
     storeSelect = (storeName, id) => { //Receives the "storeName" (and renames it "storeName") and "id" properties as arguments from the "storesArray" object that was selected from "StoreListItemComponent"
-        this.setState({selectedStore: storeName}); //replace the current string (or null) that is in "selectedStore" state which will be submitted as the "storeName" property in the "addItemSubmit" object
+        this.setState({selectedStore: storeName}); //replace the current string that is in "selectedStore" state which will be submitted as the "storeName" property in the "addItemSubmit" object
         
         let updatedStoresArray = this.state.storesArray;//Define "updatedStoresArray" as a variable that can be re-assigned, give it initial value of the "storesArray" that is currently in state.
         updatedStoresArray.map( storeObject => { //Iterates through the "updatedStoresArray" (which is an array of objects) and performs the following code on each object which is renamed to "storeObject"
@@ -78,31 +78,43 @@ class Main extends Component {
 
     //Function "addItemSubmit" to submit info from "addItem" modal  (make arrow function so don't have to bind)
     addItemSubmit = () => {
-        if (this.state.addInput) { //If the user has not entered any text, "addInput" will be an empty string which is FALSY and the "if" statement will not be entered (a blank item will not be added)
-            this.state.itemArray.push(
-                {
-                id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. 
-                storeName: this.state.selectedStore, //Set the "storeName" value of the item being added as what is currently in the "selectedStore" state
-                item: this.state.addInput, //Could submit "value" from text <Input> field since it is also defined as the state of "addInput", not sure which method is better. 
-                isChecked: false
-                }
-            )
-            ToastAndroid.showWithGravityAndOffset( //Notify user that item was added successfully
-                `${this.state.addInput} added!`,
-                ToastAndroid.SHORT,
-                ToastAndroid.TOP,
-                0,
-                100 //Y-offset of Toast, set to be close to typing area so User notices it
-            );
-            this.setState({textInputPlaceholder: 'Enter item', addInput: ''}) //Resets the <Input> text field in the "addItem" <Modal>
-        } else {
-            ToastAndroid.showWithGravityAndOffset( //Notify user that item was not added
-                'Please add an item!',
-                ToastAndroid.SHORT,
-                ToastAndroid.TOP,
-                0,
-                100 //Y-offset of Toast, set to be close to typing area so User notices it
-            );
+        console.log(this.state.selectedStore)
+        switch ('') {
+            case (this.state.addInput): //A blank item will not be added. Enter statement if there is nothing in the "addInput" state which is denoted by an empty string. "addInput" is initially an empty string and reset to an empty string after an item is submitted.
+                ToastAndroid.showWithGravityAndOffset( //Notify user that item was not added
+                    'Please enter an item!',
+                    ToastAndroid.SHORT,
+                    ToastAndroid.TOP,
+                    0,
+                    100 //Y-offset of Toast, set to be close to typing area so User notices it
+                );
+                break; // "break" so that if there is no item entered, switch statement is exited 
+            case (this.state.selectedStore)://An item without a store will not be added. Enter statement if there is nothing in the "selectedStore" state, which is denoted by an empty string. "selectedStore" is initially an empty string.
+                ToastAndroid.showWithGravityAndOffset( //Notify user that a store was not selected
+                    'Please select a store!',
+                    ToastAndroid.SHORT,
+                    ToastAndroid.TOP,
+                    0,
+                    100 //Y-offset of Toast, set to be close to typing area so User notices it
+                );
+                break; // "break" so that if there is no store selected, switch statement is exited 
+            default: //if there is both text in "addInput" and text in "selectedStore", the default will be entered and the item will be submitted
+                this.state.itemArray.push(
+                    {
+                    id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. 
+                    storeName: this.state.selectedStore, //Set the "storeName" value of the item being added as what is currently in the "selectedStore" state
+                    item: this.state.addInput, //Could submit "value" from text <Input> field since it is also defined as the state of "addInput", not sure which method is better. 
+                    isChecked: false
+                    }
+                )
+                ToastAndroid.showWithGravityAndOffset( //Notify user that item was added successfully
+                    `${this.state.addInput} added!`,
+                    ToastAndroid.SHORT,
+                    ToastAndroid.TOP,
+                    0,
+                    100 //Y-offset of Toast, set to be close to typing area so User notices it
+                );
+                this.setState({textInputPlaceholder: 'Enter item', addInput: ''}) //Resets the <Input> text field in the "addItem" <Modal>
         }
     } 
 
@@ -134,7 +146,7 @@ class Main extends Component {
             this.toggleAddStoreOverlay() //Close "addStore" overlay because not often will more than one store be added at a time
         } else {
             ToastAndroid.showWithGravityAndOffset( //Notify user that store was not added
-                'Please add a store!',
+                'Please enter a store!',
                 ToastAndroid.SHORT,
                 ToastAndroid.TOP,
                 0,
