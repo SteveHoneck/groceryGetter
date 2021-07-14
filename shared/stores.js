@@ -17,5 +17,11 @@ export const STORES = [
         storeName: "Tops",
         backgroundColor: "white",
         color: 'black'
-    }
+    },
+    {
+        id: "4", //Will be unique when from input form, use date/time stamp
+        storeName: "Any",
+        backgroundColor: "white",
+        color: 'black'
+    },
 ]

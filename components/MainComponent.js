@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { STORES } from '../shared/stores';
+import { DATA } from '../shared/data';
 import List from './ListComponent';
 import Header from './HeaderComponent';
 import Footer from './FooterComponent';
 import CustomButton from './CustomButtonComponent';
 import StoreList from './StoreListComponent';
 import { View, ScrollView, StyleSheet, Modal, Text, TextInput, ToastAndroid } from 'react-native';
-import { Overlay } from 'react-native-elements'
+import { Overlay } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
@@ -16,8 +17,8 @@ class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            itemArray: [], //Initial item array
-            storesArray: [],//Initial stores array           
+            itemArray: DATA, //Initial item array. Use DATA for pre-filled array, otherwise use []
+            storesArray: STORES,//Initial stores array. Use STORES for pre-filled array, otherwise use []          
             addItemModalVisible: false,
             addInput: '',//State for input from "addItem" modal and "addStore" overlay. This same state can be used for both because they are never active at the same time
             textInputPlaceholder: 'Enter item', //State for resetting the "placeholder" value when "addItem" <Modal> is activated (could be a constant below instead of state?)
