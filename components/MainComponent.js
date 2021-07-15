@@ -77,44 +77,40 @@ class Main extends Component {
     }
 
     //Function "addItemSubmit" to submit info from "addItem" modal  (make arrow function so don't have to bind)
-    addItemSubmit = () => {
-        console.log(this.state.selectedStore)
-        switch ('') {
-            case (this.state.addInput): //A blank item will not be added. Enter statement if there is nothing in the "addInput" state which is denoted by an empty string. "addInput" is initially an empty string and reset to an empty string after an item is submitted.
-                ToastAndroid.showWithGravityAndOffset( //Notify user that item was not added
-                    'Please enter an item!',
-                    ToastAndroid.SHORT,
-                    ToastAndroid.TOP,
-                    0,
-                    100 //Y-offset of Toast, set to be close to typing area so User notices it
-                );
-                break; // "break" so that if there is no item entered, switch statement is exited 
-            case (this.state.selectedStore)://An item without a store will not be added. Enter statement if there is nothing in the "selectedStore" state, which is denoted by an empty string. "selectedStore" is initially an empty string.
-                ToastAndroid.showWithGravityAndOffset( //Notify user that a store was not selected
-                    'Please select a store!',
-                    ToastAndroid.SHORT,
-                    ToastAndroid.TOP,
-                    0,
-                    100 //Y-offset of Toast, set to be close to typing area so User notices it
-                );
-                break; // "break" so that if there is no store selected, switch statement is exited 
-            default: //if there is both text in "addInput" and text in "selectedStore", the default will be entered and the item will be submitted
-                this.state.itemArray.push(
-                    {
-                    id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. 
-                    storeName: this.state.selectedStore, //Set the "storeName" value of the item being added as what is currently in the "selectedStore" state
-                    item: this.state.addInput, //Could submit "value" from text <Input> field since it is also defined as the state of "addInput", not sure which method is better. 
-                    isChecked: false
-                    }
-                )
-                ToastAndroid.showWithGravityAndOffset( //Notify user that item was added successfully
-                    `${this.state.addInput} added!`,
-                    ToastAndroid.SHORT,
-                    ToastAndroid.TOP,
-                    0,
-                    100 //Y-offset of Toast, set to be close to typing area so User notices it
-                );
-                this.setState({textInputPlaceholder: 'Enter item', addInput: ''}) //Resets the <Input> text field in the "addItem" <Modal>
+    addItemSubmit = () => {       
+        if ((this.state.addInput === '') || (this.state.addInput ===' ')) { //A blank item will not be added. Enter statement if there is nothing in the "addInput" state which is denoted by an empty string OR a spacebar keystroke (so an 'empty' item is not added). "addInput" is initially an empty string and reset to an empty string after an item is submitted.
+            ToastAndroid.showWithGravityAndOffset( //Notify user that item was not added
+                'Please enter an item!',
+                ToastAndroid.SHORT,
+                ToastAndroid.TOP,
+                0,
+                100 //Y-offset of Toast, set to be close to typing area so User notices it
+            );
+        } else if (this.state.selectedStore === '') { //An item without a store will not be added. Enter statement if there is nothing in the "selectedStore" state, which is denoted by an empty string. "selectedStore" is initially an empty string.
+            ToastAndroid.showWithGravityAndOffset( //Notify user that a store was not selected
+                'Please select a store!',
+                ToastAndroid.SHORT,
+                ToastAndroid.TOP,
+                0,
+                100 //Y-offset of Toast, set to be close to typing area so User notices it
+            );
+        } else {//if there is both text in "addInput" and text in "selectedStore", this will be entered and the item will be submitted
+            this.state.itemArray.push(
+                {
+                id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. 
+                storeName: this.state.selectedStore, //Set the "storeName" value of the item being added as what is currently in the "selectedStore" state
+                item: this.state.addInput, //Could submit "value" from text <Input> field since it is also defined as the state of "addInput", not sure which method is better. 
+                isChecked: false
+                }
+            )
+            ToastAndroid.showWithGravityAndOffset( //Notify user that item was added successfully
+                `${this.state.addInput} added!`,
+                ToastAndroid.SHORT,
+                ToastAndroid.TOP,
+                0,
+                100 //Y-offset of Toast, set to be close to typing area so User notices it
+            );
+            this.setState({textInputPlaceholder: 'Enter item', addInput: ''}) //Resets the <Input> text field in the "addItem" <Modal>
         }
     } 
 
