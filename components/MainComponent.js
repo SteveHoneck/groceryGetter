@@ -121,12 +121,12 @@ class Main extends Component {
     }
 
     //Function "addStoreSubmit" to submit info from "addStore" <Overlay>  (make arrow function so don't have to bind)
-    addStoreSubmit = () => {
-        if (this.state.addInput) { //If the user has not entered any text, "addInput" will be an empty string which is FALSY and the "if" statement will not be entered (a blank item will not be added)
+    addStoreSubmit = () => { //Function with two "if" statements. Outer "if" statement checks that there is ANY user input. Inner "if" statement checks if the store has already been added.
+        if (this.state.addInput) { //Outer "if" statement. If the user has not entered any text, "addInput" will be an empty string which is FALSY and the outer "if" statement will not be entered (a blank item will not be added)
 
-            let storeCheck = this.state.storesArray.filter( (storeObject) => storeObject.storeName.toLowerCase().includes(this.state.addInput.toLowerCase()) )//filter and to lower case, 
+            let storeCheckArray = this.state.storesArray.filter( (storeObject) => storeObject.storeName.toLowerCase().includes(this.state.addInput.toLowerCase()) )//This line creates a new array "storeCheckArray" to check if the store to be added is alreayd in the "storesArray" in state. "filter" the "storesArray" in state: take each object in the "storesArray", convert the "storeName" property to lower case and check if that lower case string includes the lower case version of the text user has entered. "storeCheckArray" will be an array of length 0 if there is no match. 
             
-            if ( (storeCheck.length) === 0 ) { //continue (nothing in storeCheck array means no matches, so go ahead and add store)
+            if ( (storeCheckArray.length) === 0 ) { //Inner "if" statement. If there is nothing in "storeCheckArray", it will have length of 0 meaning no matches, so enter "if" statment and add the store to the "storesArray" in state
                 this.state.storesArray.push(
                     {
                         id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. 
@@ -144,8 +144,8 @@ class Main extends Component {
                 )
                 this.setState({addStoretextInputPlaceholder: 'Enter store', addInput: ''}) //Resets the <Input> text field in the "addStore" <Overlay>
                 this.toggleAddStoreOverlay() //Close "addStore" overlay because not often will more than one store be added at a time
-            } else {
-                ToastAndroid.showWithGravityAndOffset( //Notify user that store was added successfully
+            } else { //If there is something in the "storeCheckArray", "else" statement will be entered
+                ToastAndroid.showWithGravityAndOffset( //Notify user that store has already been added
                     `${this.state.addInput} already exists!`,
                     ToastAndroid.SHORT,
                     ToastAndroid.TOP,
@@ -154,7 +154,7 @@ class Main extends Component {
                 )
             }
 
-        } else {
+        } else { //Outer "if" statement. If no store was added, notify user to add text to the input field.
             ToastAndroid.showWithGravityAndOffset( //Notify user that store was not added
                 'Please enter a store!',
                 ToastAndroid.SHORT,
