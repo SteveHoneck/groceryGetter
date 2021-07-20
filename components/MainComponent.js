@@ -123,23 +123,37 @@ class Main extends Component {
     //Function "addStoreSubmit" to submit info from "addStore" <Overlay>  (make arrow function so don't have to bind)
     addStoreSubmit = () => {
         if (this.state.addInput) { //If the user has not entered any text, "addInput" will be an empty string which is FALSY and the "if" statement will not be entered (a blank item will not be added)
-            this.state.storesArray.push(
-                {
-                    id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. 
-                    storeName: this.state.addInput,//Could submit "value" from text <Input> field since it is also defined as the state of "addInput", not sure which method is better. 
-                    backgroundColor: "white", //Default style to make the store appear un-selected when rendered in <StoreList>
-                    color: 'black' //Default style to make the store appear un-selected when rendered in <StoreList>
-                }
-            )
-            ToastAndroid.showWithGravityAndOffset( //Notify user that store was added successfully
-                `${this.state.addInput} added!`,
-                ToastAndroid.SHORT,
-                ToastAndroid.TOP,
-                0,
-                100 //Y-offset of Toast, set to be close to typing area so User notices it
-            )
-            this.setState({addStoretextInputPlaceholder: 'Enter store', addInput: ''}) //Resets the <Input> text field in the "addStore" <Overlay>
-            this.toggleAddStoreOverlay() //Close "addStore" overlay because not often will more than one store be added at a time
+
+            let storeCheck = this.state.storesArray.filter( (storeObject) => storeObject.storeName.toLowerCase().includes(this.state.addInput.toLowerCase()) )//filter and to lower case, 
+            
+            if ( (storeCheck.length) === 0 ) { //continue (nothing in storeCheck array means no matches, so go ahead and add store)
+                this.state.storesArray.push(
+                    {
+                        id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. 
+                        storeName: this.state.addInput,//Could submit "value" from text <Input> field since it is also defined as the state of "addInput", not sure which method is better. 
+                        backgroundColor: "white", //Default style to make the store appear un-selected when rendered in <StoreList>
+                        color: 'black' //Default style to make the store appear un-selected when rendered in <StoreList>
+                    }
+                )
+                ToastAndroid.showWithGravityAndOffset( //Notify user that store was added successfully
+                    `${this.state.addInput} added!`,
+                    ToastAndroid.SHORT,
+                    ToastAndroid.TOP,
+                    0,
+                    100 //Y-offset of Toast, set to be close to typing area so User notices it
+                )
+                this.setState({addStoretextInputPlaceholder: 'Enter store', addInput: ''}) //Resets the <Input> text field in the "addStore" <Overlay>
+                this.toggleAddStoreOverlay() //Close "addStore" overlay because not often will more than one store be added at a time
+            } else {
+                ToastAndroid.showWithGravityAndOffset( //Notify user that store was added successfully
+                    `${this.state.addInput} already exists!`,
+                    ToastAndroid.SHORT,
+                    ToastAndroid.TOP,
+                    0,
+                    100 //Y-offset of Toast, set to be close to typing area so User notices it
+                )
+            }
+
         } else {
             ToastAndroid.showWithGravityAndOffset( //Notify user that store was not added
                 'Please enter a store!',
