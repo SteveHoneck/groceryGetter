@@ -64,6 +64,16 @@ class Main extends Component {
         this.setState({storesArray: updatedStoresArray}); //replace "storesArray" in state with the "updatedStoresArray" which has the selected store object with styles that make it look selected
     }
 
+    //Function "storeDeselect" to reset the stores list to show nothing as selected when the Add Item  modal or Add/Remove Stores overlay is closed
+    storeDeselect = () => {
+        let updatedStoresArray = this.state.storesArray.map( storeObject =>{ //Define "updatedStoresArray" as a variable that and give it initial value of the "storesArray" that is currently in state. "map" iterates through the "updatedStoresArray" (which is an array of objects) and performs the following code on each object which is renamed to "storeObject"
+            storeObject.backgroundColor = "white";
+            storeObject.color = 'black';
+            return storeObject //Returns the "storeObject" of the current iteration to the new array "updatedStoresArray" 
+        })
+        this.setState({storesArray: updatedStoresArray});//replace "storesArray" in state with the "updatedStoresArray" which has all store objects with styles that make them look not selected
+    }
+
     //Function "deleteCheckedItems"  to delete all checked items (make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent")
     deleteCheckedItems = () => { 
         const updatedItemArray = this.state.itemArray.filter( obj => obj.isChecked === false ); //Make a copy of the "itemArray" in state, rename it "updatedItemArray", filters the"updateItemArray" (which at this point is what is currently in state) for all objects that have "isChecked" property as "false". This returns an array of objects that do not have their check boxes marked.
@@ -74,6 +84,7 @@ class Main extends Component {
     toggleAddItemModal = () => {
         this.setState({addItemModalVisible: !this.state.addItemModalVisible});
         this.setState({textInputPlaceholder: 'Enter item', addInput: ''}) //Resets the <Input> text field in the "addItem" <Modal>
+        this.storeDeselect() //Run the "storeDeselect" function to deselect any stores that user may have selected while using <Modal>
     }
 
     //Function "addItemSubmit" to submit info from "addItem" modal  (make arrow function so don't have to bind)
@@ -118,6 +129,7 @@ class Main extends Component {
     toggleAddStoreOverlay = () => {
         this.setState({addStoreOverlayVisible: !this.state.addStoreOverlayVisible});
         this.setState({addStoreTextInputPlaceholder: 'Enter store', addInput: ''}) //Resets the <Input> text field in the "addStore" <Overlay>
+        this.storeDeselect() //Run the "storeDeselect" function to deselect any stores that user may have selected while using <Overlay>
     }
 
     //Function "addStoreSubmit" to submit info from "addStore" <Overlay>  (make arrow function so don't have to bind)
@@ -170,9 +182,10 @@ class Main extends Component {
         }
     }
 
+    //Function "removeStore" to remove stores from the stores list from the add/remove stores overlay
     removeStore = () => { //can't pass value "id" of store object selected as in "storeSelect" function because "storeSelect" gets its arguments from the "StoreListItemComponent" "onPress" attribute which can only run 1 function / don't want to run "removeStore" when "onPress" is activated in "StoreListItemComponent".
-        const updatedStoresArray = this.state.storesArray.filter( obj => obj.color === 'black' );
-        this.setState({storesArray: updatedStoresArray});
+        const updatedStoresArray = this.state.storesArray.filter( obj => obj.color === 'black' ); //Make a copy of the "storesArray" in state, rename it "updatedStoresArray", filters the"updatedStoresArray" (which at this point is what is currently in state) for all objects that have "color" property as "black" (meaning they are not currently selected). This returns an array of objects that were not selected by the user.
+        this.setState({storesArray: updatedStoresArray});//replace the current "storesArray" in state with the "updatedStoresArray" i.e. an array of all items that were not selected
     }
 
     render() {
