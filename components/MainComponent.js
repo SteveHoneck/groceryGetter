@@ -71,7 +71,7 @@ class Main extends Component {
             storeObject.color = 'black';
             return storeObject //Returns the "storeObject" of the current iteration to the new array "updatedStoresArray" 
         })
-        this.setState({storesArray: updatedStoresArray});//replace "storesArray" in state with the "updatedStoresArray" which has all store objects with styles that make them look not selected
+        this.setState({storesArray: updatedStoresArray, selectedStore: ''});//replace "storesArray" in state with the "updatedStoresArray" which has all store objects with styles that make them look not selected. Also replace the text in the "selectedStore" state with an empty string because "addItemSubmit" function checks this state to see if a store is selected.
     }
 
     //Function "deleteCheckedItems"  to delete all checked items (make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent")
@@ -160,7 +160,7 @@ class Main extends Component {
                     100 //Y-offset of Toast, set to be close to typing area so User notices it
                 )
                 this.setState({addStoretextInputPlaceholder: 'Enter store', addInput: ''}) //Resets the <Input> text field in the "addStore" <Overlay>
-                this.toggleAddStoreOverlay() //Close "addStore" overlay because not often will more than one store be added at a time
+                //this.toggleAddStoreOverlay() //Close "addStore" overlay because not often will more than one store be added at a time
             } else { //If there is something in the "storeCheckArray", "else" statement will be entered
                 ToastAndroid.showWithGravityAndOffset( //Notify user that store has already been added
                     `${this.state.addInput} already exists!`,
@@ -184,7 +184,16 @@ class Main extends Component {
 
     //Function "removeStore" to remove stores from the stores list from the add/remove stores overlay
     removeStore = () => { //can't pass value "id" of store object selected as in "storeSelect" function because "storeSelect" gets its arguments from the "StoreListItemComponent" "onPress" attribute which can only run 1 function / don't want to run "removeStore" when "onPress" is activated in "StoreListItemComponent".
-        const updatedStoresArray = this.state.storesArray.filter( obj => obj.color === 'black' ); //Make a copy of the "storesArray" in state, rename it "updatedStoresArray", filters the"updatedStoresArray" (which at this point is what is currently in state) for all objects that have "color" property as "black" (meaning they are not currently selected). This returns an array of objects that were not selected by the user.
+        
+        ToastAndroid.showWithGravityAndOffset( //Notify user that store was removed successfully
+            `${this.state.selectedStore} removed!`,
+            ToastAndroid.SHORT,
+            ToastAndroid.TOP,
+            0,
+            100 //Y-offset of Toast, set to be close to typing area so User notices it
+        )
+
+        const updatedStoresArray = this.state.storesArray.filter( obj => obj.storeName !== this.state.selectedStore ); //Make a copy of the "storesArray" in state, rename it "updatedStoresArray", filters the"updatedStoresArray" (which at this point is what is currently in state) for all objects that do not have the "storeName" property as that is the same as what is in state as "selectedStore". This returns an array of objects that were not selected by the user.
         this.setState({storesArray: updatedStoresArray});//replace the current "storesArray" in state with the "updatedStoresArray" i.e. an array of all items that were not selected
     }
 
