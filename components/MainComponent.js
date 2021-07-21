@@ -184,16 +184,25 @@ class Main extends Component {
     //Function "removeStore" to remove stores from the stores list from the add/remove stores overlay
     removeStore = () => { //can't pass value "id" of store object selected as in "storeSelect" function because "storeSelect" gets its arguments from the "StoreListItemComponent" "onPress" attribute which can only run 1 function / don't want to run "removeStore" when "onPress" is activated in "StoreListItemComponent".
         
-        ToastAndroid.showWithGravityAndOffset( //Notify user that store was removed successfully
-            `${this.state.selectedStore} removed!`,
-            ToastAndroid.SHORT,
-            ToastAndroid.TOP,
-            0,
-            100 //Y-offset of Toast, set to be close to typing area so User notices it
-        )
-
-        const updatedStoresArray = this.state.storesArray.filter( obj => obj.storeName !== this.state.selectedStore ); //Make a copy of the "storesArray" in state, rename it "updatedStoresArray", filters the"updatedStoresArray" (which at this point is what is currently in state) for all objects that do not have the "storeName" property as that is the same as what is in state as "selectedStore". This returns an array of objects that were not selected by the user.
-        this.setState({storesArray: updatedStoresArray});//replace the current "storesArray" in state with the "updatedStoresArray" i.e. an array of all items that were not selected
+        if (this.state.selectedStore === '') { //Enter statement if there is nothing in the "selectedStore" state, which is denoted by an empty string. "selectedStore" is initially an empty string and returned to an empty string every time "storeDeselect" function is called.
+            ToastAndroid.showWithGravityAndOffset( //Notify user that a store was not selected
+                'Please select a store!',
+                ToastAndroid.SHORT,
+                ToastAndroid.TOP,
+                0,
+                100 //Y-offset of Toast, set to be close to typing area so User notices it
+            );
+        } else {
+            ToastAndroid.showWithGravityAndOffset( //Notify user that store was removed successfully
+                `${this.state.selectedStore} removed!`,
+                ToastAndroid.SHORT,
+                ToastAndroid.TOP,
+                0,
+                100 //Y-offset of Toast, set to be close to typing area so User notices it
+            )
+            const updatedStoresArray = this.state.storesArray.filter( obj => obj.storeName !== this.state.selectedStore ); //Make a copy of the "storesArray" in state, rename it "updatedStoresArray", filters the"updatedStoresArray" (which at this point is what is currently in state) for all objects that do not have the "storeName" property as that is the same as what is in state as "selectedStore". This returns an array of objects that were not selected by the user.
+            this.setState({storesArray: updatedStoresArray});//replace the current "storesArray" in state with the "updatedStoresArray" i.e. an array of all items that were not selected
+        }
     }
 
     render() {
