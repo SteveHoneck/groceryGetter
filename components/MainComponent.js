@@ -160,7 +160,6 @@ class Main extends Component {
                     100 //Y-offset of Toast, set to be close to typing area so User notices it
                 )
                 this.setState({addStoretextInputPlaceholder: 'Enter store', addInput: ''}) //Resets the <Input> text field in the "addStore" <Overlay>
-                //this.toggleAddStoreOverlay() //Close "addStore" overlay because not often will more than one store be added at a time
             } else { //If there is something in the "storeCheckArray", "else" statement will be entered
                 ToastAndroid.showWithGravityAndOffset( //Notify user that store has already been added
                     `${this.state.addInput} already exists!`,
