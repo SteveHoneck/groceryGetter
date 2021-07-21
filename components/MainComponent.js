@@ -170,6 +170,11 @@ class Main extends Component {
         }
     }
 
+    removeStore = () => { //can't pass value "id" of store object selected as in "storeSelect" function because "storeSelect" gets its arguments from the "StoreListItemComponent" "onPress" attribute which can only run 1 function / don't want to run "removeStore" when "onPress" is activated in "StoreListItemComponent".
+        const updatedStoresArray = this.state.storesArray.filter( obj => obj.color === 'black' );
+        this.setState({storesArray: updatedStoresArray});
+    }
+
     render() {
         return ( // <List> is passed the array of items "itemArray", and the function to toggle the checkbox "checkBoxToggle" to the "List" component. <Footer> is passed the "deleteCheckedItems" function. 
             <SafeAreaView style={styles.wrapper}>
@@ -232,9 +237,17 @@ class Main extends Component {
 
                             <View>
                                 <CustomButton title={null} icon={'check'} onPressFunction={this.addStoreSubmit} /*"title" is "null" because icon only is needed*//>
-                                <CustomButton title={null} icon={'chevron-left'} onPressFunction={this.toggleAddStoreOverlay} /*"title" is "null" because icon only is needed*//>
                             </View>
 
+                            <View>
+                                <Text>Current Stores (select to remove)</Text>
+                                <StoreList storesArray={this.state.storesArray} storeSelect={this.storeSelect} /*Pass the "storesArray" and "storeSelect" function to the <StoreList> component which will pass each object in the "storesArray" and the "storeSelect" function to the <StoreItem> component*//>     
+                                <CustomButton title={null} icon={'minus'} onPressFunction={this.removeStore} /*"title" is "null" because icon only is needed*//>
+                            </View>
+
+                            <View style={{marginTop: 50}}>
+                                <CustomButton title={null} icon={'chevron-left'} onPressFunction={this.toggleAddStoreOverlay} /*"title" is "null" because icon only is needed*//>
+                            </View>
                         </Overlay>
                     </View>
 
