@@ -35,7 +35,7 @@ function List( {itemArray, storesArray, checkBoxToggle} ) { //receives array of 
             <Text>{title}</Text> 
           )}
           stickySectionHeadersEnabled={true}
-          ListEmptyComponent={<Text>Add some items!</Text>} //Only shows up when there are no items OR stores in list
+          ListEmptyComponent={<Text>Add a store to get started!</Text>} //Only shows up when there are no items OR stores in list
         />
     )
 }
