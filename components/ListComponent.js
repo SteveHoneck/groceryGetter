@@ -32,12 +32,18 @@ function List( {itemArray, storesArray, checkBoxToggle} ) { //receives array of 
           keyExtractor={(item, index) => item + index}
           renderItem={({ item }) => <ListItem item={item} checkBoxToggle={checkBoxToggle}/>} //"renderItem" takes the "data" property from the current iteration object in "sections" ("sectionListArray"), names it "item" and passes it to <ListItem> component
           renderSectionHeader={({ section: { title } }) => (
-            <Text>{title}</Text> 
+            <Text style={styles.header}>{title}</Text> 
           )}
           stickySectionHeadersEnabled={true}
           ListEmptyComponent={<Text>Add a store to get started!</Text>} //Only shows up when there are no items OR stores in list
         />
     )
 }
+
+const styles = StyleSheet.create({
+    header: {
+      backgroundColor: 'white',
+    }
+  });
 
 export default List;
