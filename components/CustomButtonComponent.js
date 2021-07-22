@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { Button, Icon } from 'react-native-elements'
 
-const CustomButton = ({title, icon, onPressFunction}) => { //Receives the "title", "icon" name, and "onPressFunction" (which is either "deletCheckedItems" function or "addItemModal" function) from "FooterComponent"
+const CustomButton = ({title, icon, onPressFunction}) => { //Receives the "title", "icon" name, and "onPressFunction" (which is either "deleteCheckedItems" function or "toggleAddItemOverlay" function) from "FooterComponent". Receives also from <Overlay>s.
     return (
         <Button
         icon = {
