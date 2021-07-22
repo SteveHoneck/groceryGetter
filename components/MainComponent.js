@@ -10,6 +10,7 @@ import { View, ScrollView, StyleSheet, Text, TextInput, ToastAndroid } from 'rea
 import { Overlay } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AddItemOverlay from './AddItemOverlayComponent';
+import AddStoreOverlay from './AddStoreOverlayComponent';
 
 
 //Container component that will be parent to presentational components. Holds "itemArray", "storesArray", other state values, and functions that operate on the array/state and passes them to the various components
@@ -228,41 +229,30 @@ class Main extends Component {
                     </View>
                     
                     <View>
-                        <AddItemOverlay isVisible={this.state.addItemOverlayVisible} toggleAddItemOverlay={this.toggleAddItemOverlay} placeholder={this.state.textInputPlaceholder} onChangeText={text => this.setState({addInput: text})} value={this.state.addInput} storesArray={this.state.storesArray} storeSelect={this.storeSelect} addItemSubmit={this.addItemSubmit} /*All state values and all functions that are needed by the <AddItemOverlay> are passed*/ />
+                        <AddItemOverlay 
+                            isVisible={this.state.addItemOverlayVisible} 
+                            toggleAddItemOverlay={this.toggleAddItemOverlay} 
+                            placeholder={this.state.textInputPlaceholder} 
+                            onChangeText={text => this.setState({addInput: text})} 
+                            value={this.state.addInput} 
+                            storesArray={this.state.storesArray} 
+                            storeSelect={this.storeSelect} 
+                            addItemSubmit={this.addItemSubmit} /*All state values and all functions that are needed by the <AddItemOverlay> are passed*/ 
+                        />
                     </View>
                     
-               
                     <View>
-                        <Overlay 
+                        <AddStoreOverlay 
                             isVisible={this.state.addStoreOverlayVisible}
-                            onBackdropPress={this.toggleAddStoreOverlay} //Function activated when space outside the overlay is touched
-                            animationType={'fade'} //Built in (from React Modal component), there are a few options
-                            transparent={true} //Makes the overlay backdrop transparent
-                            onRequestClose={() => this.toggleAddStoreOverlay()} //Funciton that will be run when hardware back button is pressed
-                            overlayStyle={styles.overlay} //Style of the actual overlay
-                        >
-                            <View>
-                                <TextInput
-                                    placeholder={this.state.addStoreTextInputPlaceholder}//Text to show when nothing in entered in the text field
-                                    onChangeText={text => this.setState({addInput: text})}//Operates in same manner as "addItem"
-                                    value={this.state.addInput}//Operates in same manner as "addItem"
-                                />
-                            </View>
-
-                            <View>
-                                <CustomButton title={null} icon={'check'} onPressFunction={this.addStoreSubmit} /*"title" is "null" because icon only is needed*//>
-                            </View>
-
-                            <View>
-                                <Text>Current Stores (select to remove)</Text>
-                                <StoreList storesArray={this.state.storesArray} storeSelect={this.storeSelect} /*Pass the "storesArray" and "storeSelect" function to the <StoreList> component which will pass each object in the "storesArray" and the "storeSelect" function to the <StoreItem> component*//>     
-                                <CustomButton title={null} icon={'minus'} onPressFunction={this.removeStore} /*"title" is "null" because icon only is needed*//>
-                            </View>
-
-                            <View style={{marginTop: 50}}>
-                                <CustomButton title={null} icon={'chevron-left'} onPressFunction={this.toggleAddStoreOverlay} /*"title" is "null" because icon only is needed*//>
-                            </View>
-                        </Overlay>
+                            toggleAddStoreOverlay={this.toggleAddStoreOverlay}
+                            placeholder={this.state.addStoreTextInputPlaceholder}
+                            onChangeText={text => this.setState({addInput: text})}
+                            value={this.state.addInput}
+                            storesArray={this.state.storesArray} 
+                            storeSelect={this.storeSelect}
+                            addStoreSubmit={this.addStoreSubmit}
+                            removeStore={this.removeStore} /*All state values and all functions that are needed by the <AddItemOverlay> are passed*/    
+                        />
                     </View>
 
                 </View>
