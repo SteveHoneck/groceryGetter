@@ -37,7 +37,9 @@ class Main extends Component {
         const targetObject = this.state.itemArray.find( obj => { //iterates over the objects in the "itemArray", renames each object "obj" and runs the inner function to check the object it see if it contains a value that matches "id" and return the whole object. Need whole object so the "isChecked" value can be changed.
             return obj.id === id; //returns the whole object who's id ("obj.id") matches the "id" passed into "checkBoxToggle" function
         })
-        targetObject.isChecked = !targetObject.isChecked;//take the "targetObject" object found above and change its "isChecked" value 
+        targetObject.isChecked = !targetObject.isChecked;//take the "targetObject" object found above and change its "isChecked" value
+        targetObject.textStyle.textDecorationLine = targetObject.isChecked ? targetObject.textStyle.textDecorationLine = 'line-through' : targetObject.textStyle.textDecorationLine = 'none'; //Change the "targetObject"'s "textStyle" depending on if "isChecked" is true or false (used to line-through the name of the item if the item is checked)
+        targetObject.textStyle.color = targetObject.isChecked ? targetObject.textStyle.color = 'darkgray' : targetObject.textStyle.color = 'black'; //Change the "targetObject"'s "textStyle" depending on if "isChecked" is true or false (used to gray-out the name of the item if the item is checked)
         //update the array with the new changed object (splice to remove and splice to insert, or just copy whole array)
         updatedItemArray.splice(targetObjectIndex, 1); //remove the ''old'' object (the object with the "isChecked" value unchanged) from the copy of the state "itemArray"
         updatedItemArray.splice(targetObjectIndex, 0, targetObject); //put the ''new'' object (the object with the "isChecked" value that has been updated) into the copy of the state "itemArray"
@@ -108,10 +110,14 @@ class Main extends Component {
         } else {//if there is both text in "addInput" and text in "selectedStore", this will be entered and the item will be submitted
             this.state.itemArray.push(
                 {
-                id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. 
-                storeName: this.state.selectedStore, //Set the "storeName" value of the item being added as what is currently in the "selectedStore" state
-                item: this.state.addInput, //Could submit "value" from text <Input> field since it is also defined as the state of "addInput", not sure which method is better. 
-                isChecked: false
+                    id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. 
+                    storeName: this.state.selectedStore, //Set the "storeName" value of the item being added as what is currently in the "selectedStore" state
+                    item: this.state.addInput, //Could submit "value" from text <Input> field since it is also defined as the state of "addInput", not sure which method is better. 
+                    isChecked: false,
+                    textStyle: { //Create a "style" object and default styles that will be used by <CheckBox> to style the text after the check box. 
+                        textDecorationLine: 'none',
+                        color: 'black'
+                    }                
                 }
             )
             ToastAndroid.showWithGravityAndOffset( //Notify user that item was added successfully

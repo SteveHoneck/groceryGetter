@@ -17,6 +17,7 @@ const ListItem = (props) => { //props will be "checkBoxToggle" function and one 
                     title={props.item.item} //Use the "item" value from the "item" passed from the <SectionList>'s "renderItem" method as the title for the checkbox
                     checked={props.item.isChecked} //Use the "isChecked" value from the "item" passed from the <SectionList>'s "renderItem" method as the true or false for <CheckBox>'s checked value
                     onPress={() => props.checkBoxToggle(props.item.id)} //run the "checkBoxToggle" function that was passed from the "ListComponent" <ListItem> call and give the function the value "id" from the "item" passed from the <SectionList>'s "renderItem" as an argument 
+                    textStyle={props.item.textStyle} //Use the "textStyle" value (which is a "styles" object) passed from the <SectionList>'s "renderItem" method as the styles to be applied to the "title" 
                 />
             </View>
         )
