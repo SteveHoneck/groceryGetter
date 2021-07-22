@@ -9,6 +9,7 @@ import StoreList from './StoreListComponent';
 import { View, ScrollView, StyleSheet, Text, TextInput, ToastAndroid } from 'react-native';
 import { Overlay } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AddItemOverlay from './AddItemOverlayComponent';
 
 
 //Container component that will be parent to presentational components. Holds "itemArray", "storesArray", other state values, and functions that operate on the array/state and passes them to the various components
@@ -227,30 +228,7 @@ class Main extends Component {
                     </View>
                     
                     <View>
-                        <Overlay
-                            isVisible={this.state.addItemOverlayVisible}
-                            onBackdropPress={this.toggleAddItemOverlay}
-                            animationType={'fade'}
-                            transparent={true}
-                            onRequestClose={() => this.toggleAddItemOverlay()}
-                            overlayStyle={styles.overlay}
-                        >
-                            <View>
-                                <TextInput 
-                                    placeholder={this.state.textInputPlaceholder} //Text to show when nothing in entered in the text field
-                                    onChangeText={text => this.setState({addInput: text})} //When text is entered into the input field, "onChangeText" assigns that text to the variable "text", passes it to the function that sets the state value of "addInput" to that text. The input field WILL accept and display entered text WITHOUT "onChangeText"
-                                    value={this.state.addInput} //This is the value that will be shown and captured in the text input field. Initialized in state as an empty string so that the "placeholder" will show. Used in conjunction with "onChangeText" where "onChangeText" function sets the text input in state, "value" captures the state as the value that will be submitted. 
-                                />
-                            </View>
-                            <View>
-                                <Text>Select Store</Text>
-                                <StoreList storesArray={this.state.storesArray} storeSelect={this.storeSelect} /*Pass the "storesArray" and "storeSelect" function to the <StoreList> component which will pass each object in the "storesArray" and the "storeSelect" function to the <StoreItem> component*//>     
-                            </View>
-                            <View>
-                                <CustomButton title={null} icon={'check'} onPressFunction={this.addItemSubmit} /*Pass a "title", "icon", and the "addItemSubmit" to the <CustomButton> component. "addItemSubmit" renamed to general "onPressFunction" which is accepted by <CustomButton> so that any function can be passed to <CustomButton> without having to change <CustomButton> structure. "title" is "null" because icon only is needed*//>
-                                <CustomButton title={null} icon={'chevron-left'} onPressFunction={this.toggleAddItemOverlay} /*"title" is "null" because icon only is needed*//>
-                            </View>
-                        </Overlay>
+                        <AddItemOverlay isVisible={this.state.addItemOverlayVisible} toggleAddItemOverlay={this.toggleAddItemOverlay} placeholder={this.state.textInputPlaceholder} onChangeText={text => this.setState({addInput: text})} value={this.state.addInput} storesArray={this.state.storesArray} storeSelect={this.storeSelect} addItemSubmit={this.addItemSubmit} /*All state values and all functions that are needed by the <AddItemOverlay> are passed*/ />
                     </View>
                     
                
@@ -264,7 +242,6 @@ class Main extends Component {
                             overlayStyle={styles.overlay} //Style of the actual overlay
                         >
                             <View>
-                                <Text>Add Store</Text>
                                 <TextInput
                                     placeholder={this.state.addStoreTextInputPlaceholder}//Text to show when nothing in entered in the text field
                                     onChangeText={text => this.setState({addInput: text})}//Operates in same manner as "addItem"
