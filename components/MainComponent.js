@@ -127,12 +127,14 @@ class Main extends Component {
 
     //Function "addItemSubmit" to submit info from "addItem" <Overlay>  (make arrow function so don't have to bind)
     addItemSubmit = () => {       
+        let updatedItemArray = this.state.itemArray; //Initialize "updatedItemArray" as the item array currently in state so that it can be changed without mutating the array in state 
+
         if ((this.state.addInput === '') || (this.state.addInput ===' ')) { //A blank item will not be added. Enter statement if there is nothing in the "addInput" state which is denoted by an empty string OR a spacebar keystroke (so an 'empty' item is not added). "addInput" is initially an empty string and reset to an empty string after an item is submitted.
             this.toast('Please enter an item!'); //Notify user that item was not added
         } else if (this.state.selectedStore === '') { //An item without a store will not be added. Enter statement if there is nothing in the "selectedStore" state, which is denoted by an empty string. "selectedStore" is initially an empty string.
             this.toast('Please select a store!');//Notify user that a store was not selected
         } else {//if there is both text in "addInput" and text in "selectedStore", this will be entered and the item will be submitted
-            this.state.itemArray.push(
+            updatedItemArray.push( 
                 {
                     id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. 
                     storeName: this.state.selectedStore, //Set the "storeName" value of the item being added as what is currently in the "selectedStore" state
@@ -145,8 +147,7 @@ class Main extends Component {
                 }
             )
             this.toast(`${this.state.addInput} added!`); //Notify user that item was added successfully
-            this.setState({textInputPlaceholder: 'Enter item', addInput: ''}) //Resets the <Input> text field in the "addItem" <Overlay>
-            this.storeData(this.state.itemArray, 'itemArray'); //Stores the "itemArray" in state under the key 'itemArray'.
+            this.setState({textInputPlaceholder: 'Enter item', addInput: '', itemArray: updatedItemArray}, () => {this.storeData(this.state.itemArray, 'itemArray')})//Resets the <Input> text field in the "addItem" <Overlay>, replace the current "itemArray" in state with the "updatedItemArray" i.e. an array with the additional item object. After that operation is completed, execute the callback function which stores the "itemArray" in state under the key 'itemArray'.
         }
     } 
 
@@ -159,6 +160,8 @@ class Main extends Component {
 
     //Function "addStoreSubmit" to submit info from "addStore" <Overlay>  (make arrow function so don't have to bind)
     addStoreSubmit = () => { //Function with two "if" statements. Outer "if" statement checks that there is ANY user input. Inner "if" statement checks if the store has already been added.
+        let updatedStoresArray = this.state.storesArray; //Initialize "updatedStoresArray" as the stores array currently in state so that it can be changed without mutating the array in state 
+
         if (this.state.addInput) { //Outer "if" statement. If the user has not entered any text, "addInput" will be an empty string which is FALSY and the outer "if" statement will not be entered (a blank item will not be added)
 
             let storeCheckArray = this.state.storesArray.filter( storeObject => { //This line creates a new array "storeCheckArray" to check if the store to be added is already in the "storesArray" in state. "filter" the "storesArray" in state applying the inner checks to each object in "storesArray". "storeCheckArray" will be an array of length 0 if there is no match. ""
@@ -169,7 +172,7 @@ class Main extends Component {
             )
             
             if ( (storeCheckArray.length) === 0 ) { //Inner "if" statement. If there is nothing in "storeCheckArray", it will have length of 0 meaning no matches, so enter "if" statment and add the store to the "storesArray" in state
-                this.state.storesArray.push(
+                updatedStoresArray.push(
                     {
                         id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. 
                         storeName: this.state.addInput,//Could submit "value" from text <Input> field since it is also defined as the state of "addInput", not sure which method is better. 
@@ -178,8 +181,7 @@ class Main extends Component {
                     }
                 )
                 this.toast(`${this.state.addInput} added!`);//Notify user that store was added successfully
-                this.setState({addStoretextInputPlaceholder: 'Enter store', addInput: ''}) //Resets the <Input> text field in the "addStore" <Overlay>
-                this.storeData(this.state.storesArray, 'storesArray')//Stores the "storesArray" in state under the key 'storesArray'.
+                this.setState({addStoretextInputPlaceholder: 'Enter store', addInput: '', storesArray: updatedStoresArray}, () => {this.storeData(this.state.storesArray, 'storesArray')})//Resets the <Input> text field in the "addStore" <Overlay>, replace the current "storesArray" in state with the "updatedStoresArray" i.e. an array of all stores that were not selected. After that operation is completed, execute the callback function which stores the "storesArray" in state under the key 'storesArray'.
             } else { //If there is something in the "storeCheckArray", "else" statement will be entered
                 this.toast(`${this.state.addInput} already exists!`);//Notify user that store has already been added
             }
@@ -197,7 +199,7 @@ class Main extends Component {
         } else {
             this.toast(`${this.state.selectedStore} removed!`);//Notify user that store was removed successfully
             const updatedStoresArray = this.state.storesArray.filter( obj => obj.storeName !== this.state.selectedStore ); //Make a copy of the "storesArray" in state, rename it "updatedStoresArray", filters the"updatedStoresArray" (which at this point is what is currently in state) for all objects that do not have the "storeName" property as that is the same as what is in state as "selectedStore". This returns an array of objects that were not selected by the user.
-            this.setState({storesArray: updatedStoresArray}, () => {this.storeData(this.state.storesArray, 'storesArray')});//replace the current "storesArray" in state with the "updatedStoresArray" i.e. an array of all items that were not selected. After that operation is completed, execute the callback function which stores the "itemArray" in state under the key 'itemArray'.
+            this.setState({storesArray: updatedStoresArray}, () => {this.storeData(this.state.storesArray, 'storesArray')});//replace the current "storesArray" in state with the "updatedStoresArray" i.e. an array of all stores that were not selected. After that operation is completed, execute the callback function which stores the "storesArray" in state under the key 'storesArray'.
         }
     }
 
