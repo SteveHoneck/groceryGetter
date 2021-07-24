@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, View, StyleSheet, SectionList } from 'react-native';
 import ListItem from './ListItemComponent';
+import * as Animatable from 'react-native-animatable';
 
 function List( {itemArray, storesArray, checkBoxToggle} ) { //receives array of items "itemArray", array of stores "storesArray" & function "checkBoxToggle" as props from main. "for" loop combines the "itemArray" and "storesArray" into an array called "sectionListArray" that can be used by <SectionList>. "checkBoxToggle" is passed directly to "ListItemComponent". 
     let sectionListArray = [] //Initalize an empty array to be used by <SectionList>
@@ -27,7 +28,8 @@ function List( {itemArray, storesArray, checkBoxToggle} ) { //receives array of 
     }
     
     return(
-    <SectionList
+      <Animatable.View animation='slideInLeft' duration={1500} /*Causes entire <SectionList> to slide into view when rendered (which is on application initial load only)*/>
+        <SectionList
           sections={sectionListArray}
           keyExtractor={(item, index) => item + index}
           renderItem={({ item }) => <ListItem item={item} checkBoxToggle={checkBoxToggle}/>} //"renderItem" takes the "data" property from the current iteration object in "sections" ("sectionListArray"), names it "item" and passes it to <ListItem> component
@@ -37,6 +39,7 @@ function List( {itemArray, storesArray, checkBoxToggle} ) { //receives array of 
           stickySectionHeadersEnabled={true}
           ListEmptyComponent={<Text>Add a store to get started!</Text>} //Only shows up when there are no items OR stores in list
         />
+      </Animatable.View>
     )
 }
 
