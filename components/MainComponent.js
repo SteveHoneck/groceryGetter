@@ -8,6 +8,7 @@ import { View, StyleSheet, ToastAndroid } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AddItemOverlay from './AddItemOverlayComponent';
 import AddStoreOverlay from './AddStoreOverlayComponent';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 //Container component that will be parent to presentational components. Holds "itemArray", "storesArray", other state values, and functions that operate on the array/state and passes them to the various components
@@ -25,6 +26,31 @@ class Main extends Component {
             addStoreOverlayVisible: false, //
             addStoreTextInputPlaceholder: 'Enter store'//State for resetting the "placeholder" value when "addStore" <Overlay> is activated (could be a constant below instead of state?)
         };
+        this.getData('itemArray', 'storesArray');  //Function to retrieve any data stored under the keys "itemArray" and "storesArray", called when the application is first constructed
+    }
+
+    //Function for persistent storage of data (data for this application is the array of item objects and array of store objects)
+    storeData = async (array, key) => { //Name for function "storeData" can be called anything. Pass in two arguments named "array" (expected to be an array of item objects or store objects), and "key" (expected to be a string)
+        try {
+            const jsonArray = JSON.stringify(array) //"AsyncStorage" library can only store string data. This line converts the array passed (named "array") in to a string using "JSON.stringify" and names the new string "jsonArray"
+            await AsyncStorage.setItem(key, jsonArray) //"setItem" is from "AsyncStorage" library. This line creates a key/value pair in storage and assigns the "jsonArray" created in the line above as the value to the a key named from the "key" string passed into the "storeData" function. 
+        } catch (err) { //if the storage did not work, an error is created and caught, renamed "err" and handled by the inner code
+            console.log('Saving Error:', err) //Change to Toast when toast component is built
+        }
+    }
+
+    //Function for retrieval of persistently stored data 
+    getData = async (keyOne, keyTwo) => {//Name for function "getData" can be called anything. Pass in two arguments named "keyOne" and "keyTwo" (expected to be strings). These strings should correspond to key/value pairs created using the "AsyncStorage.setItem" function. Function set up to take two keys as arguments because this application will only have two data objects stored that need to be retrieved (other option is to have one argument but call the function two times)
+        try {
+            const itemArray = await AsyncStorage.getItem(keyOne); //"AsyncStorage.getItem" is from "AsyncStorage" library. Required to be passed a key that corresponds to a value saved in storage. Value is returned in string form and named "itemArray" (when "getData" is called, "itemArray" is the first argument passed and the actual item array is the value stored corresponding to that key, therefore, naming it "itemArray" is more clear)
+            const storesArray = await AsyncStorage.getItem(keyTwo);//Required to be passed a key that corresponds to a value saved in storage. Value is returned in string form and named "storesArray" (when "getData" is called, "storesArray" is the second argument passed and the actual stores array is the value stored corresponding to that key, therefore, naming it "storesArray" is more clear)
+            this.setState({
+                itemArray: JSON.parse(itemArray) || [], //Assign the value that was retrieved from storage and named "itemArray" to the state value of "itemArray" (must "JSON.parse" it because it was stored in string format and needs converted) OR make the state value an empty array if there was nothing in storage.
+                storesArray: JSON.parse(storesArray) || []//Assign the value that was retrieved from storage and named "storesArray" to the state value of "storesArray" (must "JSON.parse" it because it was stored in string format and needs converted) OR make the state value an empty array if there was nothing in storage.
+            }); 
+        } catch (err) {//if the retrieval did not work, an error is created and caught, renamed "err" and handled by the inner code
+            console.log('Loading Error:', err) //Change to Toast when toast component is built
+        }
     }
 
     //Function "checkBoxToggle"  to check/uncheck items' boxes (made arrow function so don't have to bind). Must be in "MainComponent" because the function operates on the state in "MainComponent"
@@ -42,7 +68,7 @@ class Main extends Component {
         //update the array with the new changed object (splice to remove and splice to insert, or just copy whole array)
         updatedItemArray.splice(targetObjectIndex, 1); //remove the ''old'' object (the object with the "isChecked" value unchanged) from the copy of the state "itemArray"
         updatedItemArray.splice(targetObjectIndex, 0, targetObject); //put the ''new'' object (the object with the "isChecked" value that has been updated) into the copy of the state "itemArray"
-        this.setState({itemArray: updatedItemArray}); //replace the current "itemArray" in state with the "updatedItemArray"
+        this.setState({itemArray: updatedItemArray}, () => {this.storeData(this.state.itemArray, 'itemArray')}); //replace the current "itemArray" in state with the "updatedItemArray". After that operation is completed, execute the callback function which stores the "itemArray" in state under the key 'itemArray'.
     }
 
     //Function to change the current state of the property "selectedStore" and to change the style properties of the selected store within "StoreListItemComponent". "selectedStore" will be a property of a new item when the item is added ((make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent")
@@ -78,7 +104,7 @@ class Main extends Component {
     //Function "deleteCheckedItems"  to delete all checked items (make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent")
     deleteCheckedItems = () => { 
         const updatedItemArray = this.state.itemArray.filter( obj => obj.isChecked === false ); //Make a copy of the "itemArray" in state, rename it "updatedItemArray", filters the"updateItemArray" (which at this point is what is currently in state) for all objects that have "isChecked" property as "false". This returns an array of objects that do not have their check boxes marked.
-        this.setState({itemArray: updatedItemArray}); //replace the current "itemArray" in state with the "updatedItemArray" i.e. an array of all items that are unchecked
+        this.setState({itemArray: updatedItemArray}, ()=>{this.storeData(this.state.itemArray, 'itemArray')}); //replace the current "itemArray" in state with the "updatedItemArray" i.e. an array of all items that are unchecked. After that operation is completed, execute the callback function which stores the "itemArray" in state under the key 'itemArray'.
     }
 
     //Function to change the current state of the Add Item <Overlay>'s visibility
@@ -127,6 +153,7 @@ class Main extends Component {
                 100 //Y-offset of Toast, set to be close to typing area so User notices it
             );
             this.setState({textInputPlaceholder: 'Enter item', addInput: ''}) //Resets the <Input> text field in the "addItem" <Overlay>
+            this.storeData(this.state.itemArray, 'itemArray'); //Stores the "itemArray" in state under the key 'itemArray'.
         }
     } 
 
@@ -165,6 +192,7 @@ class Main extends Component {
                     100 //Y-offset of Toast, set to be close to typing area so User notices it
                 )
                 this.setState({addStoretextInputPlaceholder: 'Enter store', addInput: ''}) //Resets the <Input> text field in the "addStore" <Overlay>
+                this.storeData(this.state.storesArray, 'storesArray')//Stores the "storesArray" in state under the key 'storesArray'.
             } else { //If there is something in the "storeCheckArray", "else" statement will be entered
                 ToastAndroid.showWithGravityAndOffset( //Notify user that store has already been added
                     `${this.state.addInput} already exists!`,
@@ -206,7 +234,7 @@ class Main extends Component {
                 100 //Y-offset of Toast, set to be close to typing area so User notices it
             )
             const updatedStoresArray = this.state.storesArray.filter( obj => obj.storeName !== this.state.selectedStore ); //Make a copy of the "storesArray" in state, rename it "updatedStoresArray", filters the"updatedStoresArray" (which at this point is what is currently in state) for all objects that do not have the "storeName" property as that is the same as what is in state as "selectedStore". This returns an array of objects that were not selected by the user.
-            this.setState({storesArray: updatedStoresArray});//replace the current "storesArray" in state with the "updatedStoresArray" i.e. an array of all items that were not selected
+            this.setState({storesArray: updatedStoresArray}, () => {this.storeData(this.state.storesArray, 'storesArray')});//replace the current "storesArray" in state with the "updatedStoresArray" i.e. an array of all items that were not selected. After that operation is completed, execute the callback function which stores the "itemArray" in state under the key 'itemArray'.
         }
     }
 
