@@ -63,8 +63,7 @@ class Main extends Component {
             return obj.id === id; //returns the whole object who's id ("obj.id") matches the "id" passed into "checkBoxToggle" function
         })
         targetObject.isChecked = !targetObject.isChecked;//take the "targetObject" object found above and change its "isChecked" value
-        targetObject.textStyle.textDecorationLine = targetObject.isChecked ? targetObject.textStyle.textDecorationLine = 'line-through' : targetObject.textStyle.textDecorationLine = 'none'; //Change the "targetObject"'s "textStyle" depending on if "isChecked" is true or false (used to line-through the name of the item if the item is checked)
-        targetObject.textStyle.color = targetObject.isChecked ? targetObject.textStyle.color = 'darkgray' : targetObject.textStyle.color = 'black'; //Change the "targetObject"'s "textStyle" depending on if "isChecked" is true or false (used to gray-out the name of the item if the item is checked)
+        targetObject.textStyle = targetObject.isChecked ? targetObject.textStyle = styles.isChecked : targetObject.textStyle = styles.isNotChecked; //Change the "targetObject"'s "textStyle" depending on if "isChecked" is true or false (used to line-through and gray out the name of the item if the item is checked)
         //update the array with the new changed object (splice to remove and splice to insert, or just copy whole array)
         updatedItemArray.splice(targetObjectIndex, 1); //remove the ''old'' object (the object with the "isChecked" value unchanged) from the copy of the state "itemArray"
         updatedItemArray.splice(targetObjectIndex, 0, targetObject); //put the ''new'' object (the object with the "isChecked" value that has been updated) into the copy of the state "itemArray"
@@ -78,7 +77,7 @@ class Main extends Component {
         let updatedStoresArray = this.state.storesArray;//Define "updatedStoresArray" as a variable that can be re-assigned, give it initial value of the "storesArray" that is currently in state.
         updatedStoresArray.map( storeObject => { //Iterates through the "updatedStoresArray" (which is an array of objects) and performs the following code on each object which is renamed to "storeObject"
                 if (storeObject.storeName === storeName) { //If the current "storeObject" being iterated over matches the "id" that was passed in from the "StoreListItemComponent", change the following two style attributes that will make it look selected. Getting spread syntax to work will take more research....
-                    storeObject.backgroundColor = "grey";
+                    storeObject.backgroundColor = "grey"; //~~~!!!~~~Could create a "styles" object for these (like done in "checkBoxToggle" function) and pass entire styles object to "StoreListItemComponent", but would result is similar length code
                     storeObject.color = 'white';
                 } else { //If the current "storeObject" being iterated over does not match the "id" that was passed in from the "StoreListItemComponent", change the following two style attributes that will make it look un-selected (need to perform this step to reset the text properties so it does not look like multiple things are selected). Getting spread syntax to work will take more research....
                     storeObject.backgroundColor = "white";
@@ -94,7 +93,7 @@ class Main extends Component {
     //Function "storeDeselect" to reset the stores list to show nothing as selected when the Add Item  overlay or Add/Remove Stores overlay is closed
     storeDeselect = () => {
         let updatedStoresArray = this.state.storesArray.map( storeObject =>{ //Define "updatedStoresArray" as a variable that and give it initial value of the "storesArray" that is currently in state. "map" iterates through the "updatedStoresArray" (which is an array of objects) and performs the following code on each object which is renamed to "storeObject"
-            storeObject.backgroundColor = "white";
+            storeObject.backgroundColor = "white"; //~~~!!!~~~Could create a "styles" object for these (like done in "checkBoxToggle" function) and pass entire styles object to "StoreListItemComponent", but would result is similar length code
             storeObject.color = 'black';
             return storeObject //Returns the "storeObject" of the current iteration to the new array "updatedStoresArray" 
         })
@@ -306,8 +305,13 @@ const styles = StyleSheet.create({
       position: 'absolute', //Needed to push footer to the bottom when the list of items is empty 
       bottom: 0
     },
-    overlay: {
-
+    isChecked: { //~~~!!!~~~Should this be moved to "ListItemComponent" and called differently in "checkBoxToggle"?
+        textDecorationLine: 'line-through',
+        color: 'darkgray'
+    },
+    isNotChecked: { //~~~!!!~~~Should this be moved to "ListItemComponent" and called differently in "checkBoxToggle"?
+        textDecorationLine: 'none',
+        color: 'black'
     }
   });
 
