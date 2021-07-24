@@ -10,7 +10,6 @@ import AddItemOverlay from './AddItemOverlayComponent';
 import AddStoreOverlay from './AddStoreOverlayComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
 //Container component that will be parent to presentational components. Holds "itemArray", "storesArray", other state values, and functions that operate on the array/state and passes them to the various components
 
 class Main extends Component {
@@ -35,7 +34,8 @@ class Main extends Component {
             const jsonArray = JSON.stringify(array) //"AsyncStorage" library can only store string data. This line converts the array passed (named "array") in to a string using "JSON.stringify" and names the new string "jsonArray"
             await AsyncStorage.setItem(key, jsonArray) //"setItem" is from "AsyncStorage" library. This line creates a key/value pair in storage and assigns the "jsonArray" created in the line above as the value to the a key named from the "key" string passed into the "storeData" function. 
         } catch (err) { //if the storage did not work, an error is created and caught, renamed "err" and handled by the inner code
-            console.log('Saving Error:', err) //Change to Toast when toast component is built
+            console.log('Saving Error:', err);
+            this.toast('Error saving data.');
         }
     }
 
@@ -49,8 +49,20 @@ class Main extends Component {
                 storesArray: JSON.parse(storesArray) || []//Assign the value that was retrieved from storage and named "storesArray" to the state value of "storesArray" (must "JSON.parse" it because it was stored in string format and needs converted) OR make the state value an empty array if there was nothing in storage.
             }); 
         } catch (err) {//if the retrieval did not work, an error is created and caught, renamed "err" and handled by the inner code
-            console.log('Loading Error:', err) //Change to Toast when toast component is built
+            console.log('Loading Error:', err);
+            this.toast('Error loading data.');
         }
+    }
+
+    //Function "toast" to be called whenever a "ToastAndriod" notification is needed. ~~~!!!~~~ Would be nice to do as a functional component as opposed to a function here (just in order to avoid another function in "MainComponent"), but it's not immediately apparent how to make that work
+    toast = (message) => { //Receives a string as an argument which is named "message"
+        ToastAndroid.showWithGravityAndOffset( 
+            message,
+            ToastAndroid.SHORT,
+            ToastAndroid.TOP,
+            0,
+            100 //Y-offset of Toast, set to be close to typing area so User notices it
+        );
     }
 
     //Function "checkBoxToggle"  to check/uncheck items' boxes (made arrow function so don't have to bind). Must be in "MainComponent" because the function operates on the state in "MainComponent"
@@ -116,21 +128,9 @@ class Main extends Component {
     //Function "addItemSubmit" to submit info from "addItem" <Overlay>  (make arrow function so don't have to bind)
     addItemSubmit = () => {       
         if ((this.state.addInput === '') || (this.state.addInput ===' ')) { //A blank item will not be added. Enter statement if there is nothing in the "addInput" state which is denoted by an empty string OR a spacebar keystroke (so an 'empty' item is not added). "addInput" is initially an empty string and reset to an empty string after an item is submitted.
-            ToastAndroid.showWithGravityAndOffset( //Notify user that item was not added
-                'Please enter an item!',
-                ToastAndroid.SHORT,
-                ToastAndroid.TOP,
-                0,
-                100 //Y-offset of Toast, set to be close to typing area so User notices it
-            );
+            this.toast('Please enter an item!'); //Notify user that item was not added
         } else if (this.state.selectedStore === '') { //An item without a store will not be added. Enter statement if there is nothing in the "selectedStore" state, which is denoted by an empty string. "selectedStore" is initially an empty string.
-            ToastAndroid.showWithGravityAndOffset( //Notify user that a store was not selected
-                'Please select a store!',
-                ToastAndroid.SHORT,
-                ToastAndroid.TOP,
-                0,
-                100 //Y-offset of Toast, set to be close to typing area so User notices it
-            );
+            this.toast('Please select a store!');//Notify user that a store was not selected
         } else {//if there is both text in "addInput" and text in "selectedStore", this will be entered and the item will be submitted
             this.state.itemArray.push(
                 {
@@ -144,13 +144,7 @@ class Main extends Component {
                     }                
                 }
             )
-            ToastAndroid.showWithGravityAndOffset( //Notify user that item was added successfully
-                `${this.state.addInput} added!`,
-                ToastAndroid.SHORT,
-                ToastAndroid.TOP,
-                0,
-                100 //Y-offset of Toast, set to be close to typing area so User notices it
-            );
+            this.toast(`${this.state.addInput} added!`); //Notify user that item was added successfully
             this.setState({textInputPlaceholder: 'Enter item', addInput: ''}) //Resets the <Input> text field in the "addItem" <Overlay>
             this.storeData(this.state.itemArray, 'itemArray'); //Stores the "itemArray" in state under the key 'itemArray'.
         }
@@ -183,33 +177,15 @@ class Main extends Component {
                         color: 'black' //Default style to make the store appear un-selected when rendered in <StoreList>
                     }
                 )
-                ToastAndroid.showWithGravityAndOffset( //Notify user that store was added successfully
-                    `${this.state.addInput} added!`,
-                    ToastAndroid.SHORT,
-                    ToastAndroid.TOP,
-                    0,
-                    100 //Y-offset of Toast, set to be close to typing area so User notices it
-                )
+                this.toast(`${this.state.addInput} added!`);//Notify user that store was added successfully
                 this.setState({addStoretextInputPlaceholder: 'Enter store', addInput: ''}) //Resets the <Input> text field in the "addStore" <Overlay>
                 this.storeData(this.state.storesArray, 'storesArray')//Stores the "storesArray" in state under the key 'storesArray'.
             } else { //If there is something in the "storeCheckArray", "else" statement will be entered
-                ToastAndroid.showWithGravityAndOffset( //Notify user that store has already been added
-                    `${this.state.addInput} already exists!`,
-                    ToastAndroid.SHORT,
-                    ToastAndroid.TOP,
-                    0,
-                    100 //Y-offset of Toast, set to be close to typing area so User notices it
-                )
+                this.toast(`${this.state.addInput} already exists!`);//Notify user that store has already been added
             }
 
         } else { //Outer "if" statement. If no store was added, notify user to add text to the input field.
-            ToastAndroid.showWithGravityAndOffset( //Notify user that store was not added
-                'Please enter a store!',
-                ToastAndroid.SHORT,
-                ToastAndroid.TOP,
-                0,
-                100 //Y-offset of Toast, set to be close to typing area so User notices it
-            );
+            this.toast('Please enter a store!');//Notify user that store was not added
         }
     }
 
@@ -217,21 +193,9 @@ class Main extends Component {
     removeStore = () => { //can't pass value "id" of store object selected as in "storeSelect" function because "storeSelect" gets its arguments from the "StoreListItemComponent" "onPress" attribute which can only run 1 function / don't want to run "removeStore" when "onPress" is activated in "StoreListItemComponent".
         
         if (this.state.selectedStore === '') { //Enter statement if there is nothing in the "selectedStore" state, which is denoted by an empty string. "selectedStore" is initially an empty string and returned to an empty string every time "storeDeselect" function is called.
-            ToastAndroid.showWithGravityAndOffset( //Notify user that a store was not selected
-                'Please select a store!',
-                ToastAndroid.SHORT,
-                ToastAndroid.TOP,
-                0,
-                100 //Y-offset of Toast, set to be close to typing area so User notices it
-            );
+            this.toast('Please select a store!');//Notify user that a store was not selected
         } else {
-            ToastAndroid.showWithGravityAndOffset( //Notify user that store was removed successfully
-                `${this.state.selectedStore} removed!`,
-                ToastAndroid.SHORT,
-                ToastAndroid.TOP,
-                0,
-                100 //Y-offset of Toast, set to be close to typing area so User notices it
-            )
+            this.toast(`${this.state.selectedStore} removed!`);//Notify user that store was removed successfully
             const updatedStoresArray = this.state.storesArray.filter( obj => obj.storeName !== this.state.selectedStore ); //Make a copy of the "storesArray" in state, rename it "updatedStoresArray", filters the"updatedStoresArray" (which at this point is what is currently in state) for all objects that do not have the "storeName" property as that is the same as what is in state as "selectedStore". This returns an array of objects that were not selected by the user.
             this.setState({storesArray: updatedStoresArray}, () => {this.storeData(this.state.storesArray, 'storesArray')});//replace the current "storesArray" in state with the "updatedStoresArray" i.e. an array of all items that were not selected. After that operation is completed, execute the callback function which stores the "itemArray" in state under the key 'itemArray'.
         }
