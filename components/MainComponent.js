@@ -199,7 +199,7 @@ class Main extends Component {
         } else {
             this.toast(`${this.state.selectedStore} removed!`);//Notify user that store was removed successfully
             const updatedStoresArray = this.state.storesArray.filter( obj => obj.storeName !== this.state.selectedStore ); //Make a copy of the "storesArray" in state, rename it "updatedStoresArray", filters the"updatedStoresArray" (which at this point is what is currently in state) for all objects that do not have the "storeName" property as that is the same as what is in state as "selectedStore". This returns an array of objects that were not selected by the user.
-            this.setState({storesArray: updatedStoresArray}, () => {this.storeData(this.state.storesArray, 'storesArray')});//replace the current "storesArray" in state with the "updatedStoresArray" i.e. an array of all stores that were not selected. After that operation is completed, execute the callback function which stores the "storesArray" in state under the key 'storesArray'.
+            this.setState({storesArray: updatedStoresArray, selectedStore: ''}, () => {this.storeData(this.state.storesArray, 'storesArray')});//replace the current "storesArray" in state with the "updatedStoresArray" i.e. an array of all stores that were not selected AND reset the "selectedStore" state to an empty string. After that operation is completed, execute the callback function which stores the "storesArray" in state under the key 'storesArray'.
         }
     }
 
