@@ -29,7 +29,7 @@ const AddItemOverlay = (props) => {
             <View style={styles.storeContainer}>
                 <Text style={styles.storeSelectText}>Select Store</Text>
                 <Hr />
-                <StoreList storesArray={props.storesArray} storeSelect={props.storeSelect} /*Pass the "storesArray" and "storeSelect" function (passed originally from "MainComponent") to the <StoreList> component which will pass each object in the "storesArray" and the "storeSelect" function to the <StoreItem> component*//>     
+                <StoreList storesArray={props.storesArray} storeSelect={props.storeSelect} /*Pass the "storesArray" and "storeSelect" function (passed originally from "MainComponent") to the <StoreList> component which will pass each object in the "storesArray" and the "storeSelect" function to the <StoreListItem> component*//>     
             </View>
             <View style={styles.submitButtonContainer}>
                 <CustomButton title={null} icon={'check'} onPressFunction={props.addItemSubmit} /*Pass a "title", "icon", and the "addItemSubmit" to the <CustomButton> component. "addItemSubmit" (passed originally from "MainComponent") renamed to general "onPressFunction" which is accepted by <CustomButton> so that any function can be passed to <CustomButton> without having to change <CustomButton> structure. "title" is "null" because icon only is needed*//>
@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     storeContainer: {
-        alignItems: "center",
-        width: 125,
+        alignItems: "center", //Aligns list title only, list items are aligned in "StoreListComponent"
+        //width: set in "StoreListComponent"
         height: 75,
         marginVertical: 5,
         marginHorizontal: 10, 

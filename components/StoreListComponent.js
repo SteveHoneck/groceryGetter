@@ -1,23 +1,23 @@
 import React from 'react';
-import { Text } from 'react-native';
-
+import { Text, FlatList } from 'react-native';
 import StoreListItem from './StoreListItemComponent';
 
 //Operates the same as "ListComponent", could be combined into a more general function depending on how "ListComponent" uses <SectionList>.
 
-function StoreList( {storesArray, storeSelect} ) { //receives array of stores "storesArray" & function "storeSelect" as props from main, passes each object in the array & a copy of the "storeSelect" function to "StoreListItemComponent". These are destructured from "props" so that "storeSelect" does not have to get pulled out of the "props" via an extra line of code "const storeSelect = props.storeSelect;" so it can be passed to "StoreListItem". "storeSelect" can't be passed through the "map" method because that method only takes in items from the "storesArray", objects in that array do not contain the "storeSelect" function.
-    if (storesArray.length === 0){ //If there are no stores in the "storesArray" passed from "MainComponent", display the <Text>
-        return <Text style={{color: 'darkgray'}}>No stores</Text>
-    } else { //If there are stores in the "storesArray" passed from "MainComponent", "map" them into <StoreListItem>s.
-    
-        storelist = storesArray.map ( storeObject => { //map function creates a new array called "storeslist" by taking each object from the "storesArray" (which was passed as props from "MainComponent"), renames it "storesObject" and runs the inner "return" function on that item. The result is an array of <StoreListItem>s.
-            return (//The map function renders a <StoreListItem> for each object (which is being called "storeObject") in the "storesArray" and passes values from that object to <StoreListItem> as props ("key", "storeObject", "storeSelect" are packaged into an object called "props" and passed)
-                <StoreListItem key={storeObject.id} storeObject={storeObject} storeSelect={storeSelect} /> 
-            )
-        })
+function StoreList( {storesArray, storeSelect} ) { //receives array of stores "storesArray" & function "storeSelect" as props from main, passes each object in the array & a copy of the "storeSelect" function to "StoreListItemComponent" through <FlatList>'s built-in functionality. 
+    const renderItem = ({ item }) => ( //"renderItem" is called by the <FlatList>'s "renderItem" property
+        <StoreListItem storeObject={item} storeSelect={storeSelect} /> // The <FlatList>'s "renderItem" property takes an object from the "data" property, names it "item" and passes it to this function which renders a <StoreListItem> for each "item" (object in the "data" property), and passes to the <StoreListItem> the "item" renamed to "storeObject" and the "storeSelect" function as props.
+    )
 
-        return storelist; //New array of <StoreListItems> created by "map" function is returned by the "StoreList" function
-    }
+    return(
+        <FlatList 
+            data={storesArray} // Array from which each object is passed to "render" item
+            renderItem={renderItem} // Function to be called on each object in the "data" property
+            keyExtractor={item => item.id} //
+            ListEmptyComponent={<Text style={{color: 'darkgray'}}>No stores</Text>} //Displays when there are no stores in the "storesArray"
+            contentContainerStyle={{alignItems: 'center', width: 125}} //'center' aligns the store names in the list to the center of the list. 'width' sets the width of the list, without this property, the width of the list would snap to the length of the longest store
+        />
+    )
 }
 
 

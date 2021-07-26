@@ -3,7 +3,6 @@ import { Overlay } from 'react-native-elements';
 import { View, StyleSheet, Text, TextInput } from 'react-native';
 import CustomButton from './CustomButtonComponent';
 import StoreList from './StoreListComponent';
-import { ScrollView } from 'react-native';
 import Hr from './HorizontalRuleComponent';
 
 
@@ -32,9 +31,9 @@ const AddStoreOverlay = (props) => {
             </View>
 
             <View style={styles.storeContainer}>
-                <Text style={styles.storeSelectText}>Select to remove</Text> 
+                <Text style={styles.storeSelectText}>Select to Remove</Text> 
                 <Hr />
-                <StoreList storesArray={props.storesArray} storeSelect={props.storeSelect} /*Pass the "storesArray" and "storeSelect" function to the <StoreList> component which will pass each object in the "storesArray" and the "storeSelect" function to the <StoreItem> component*//>     
+                <StoreList storesArray={props.storesArray} storeSelect={props.storeSelect} /*Pass the "storesArray" and "storeSelect" function to the <StoreList> component which will pass each object in the "storesArray" and the "storeSelect" function to the <StoreListItem> component*//>     
             </View>
             <View style={styles.removeButtonContainer}>
                 <CustomButton title={null} icon={'minus'} onPressFunction={props.removeStore} /*"title" is "null" because icon only is needed*//>
@@ -61,8 +60,8 @@ const styles = StyleSheet.create({
         marginBottom: 35
     },
     storeContainer: {
-        alignItems: "center",
-        width: 125,
+        alignItems: "center", //Aligns list title only, list items are aligned in "StoreListComponent"
+        //width: set in "StoreListComponent"
         height: 75,
         marginVertical: 5, 
         marginHorizontal: 10, 
