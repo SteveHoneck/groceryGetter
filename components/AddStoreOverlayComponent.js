@@ -49,29 +49,31 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     textInputContainer: {
-        margin: 15, //Sets all margins to 15px
-        marginBottom: 5, //Overrides bottom margin to 5px
+        alignItems: "center",
+        marginTop: 10,
+        marginHorizontal: 10,
+        marginBottom: 5, 
         width: 125,
     },
     submitButtonContainer: {
-        margin: 15, //Sets all margins to 15px
-        marginTop: 5, //Overrides top margin to 5px
-        marginBottom: 35 //Overrides bottom margin to 35px
+        marginTop: 5, 
+        marginHorizontal: 10, 
+        marginBottom: 35
     },
     storeContainer: {
         alignItems: "center",
         width: 125,
         height: 75,
-        margin: 15, //Sets all margins to 15px
-        marginBottom: 5, //Overrides bottom margin to 5px
-        marginTop: 5 //Overrides top margin to 5px
+        marginVertical: 5, 
+        marginHorizontal: 10, 
     },
     storeSelectText: {
         fontWeight: 'bold'
     },
     removeButtonContainer: {
-        margin: 15, //Sets all margins to 15px
-        marginTop: 5, //Overrides top margin to 5px
+        marginTop: 5, 
+        marginHorizontal: 10, 
+        marginBottom: 10
     },
 
 });
