@@ -6,8 +6,12 @@ import CustomButton from './CustomButtonComponent';
 const Footer = ({deleteCheckedItems, toggleAddItemOverlay}) => { //Pass "deleteCheckedItems" function (renamed as "onPressFunction" so that both "deleteCheckedItems" and "toggleAddItemOverlay" functions can be passed to the "CustomButtonComponent" under same prop name) from "MainComponent" to "FooterComponent" to "CustomButtonComponent"
     return (
         <View style={styles.buttonRow}>
-            <CustomButton title={'Add Item'} icon={'plus'} onPressFunction={toggleAddItemOverlay} />
-            <CustomButton title={'Remove Checked'} icon={'minus'} onPressFunction={deleteCheckedItems}/>
+            <View style={styles.buttonContainer}>
+              <CustomButton title={'Add Item'} icon={'plus'} onPressFunction={toggleAddItemOverlay} />
+            </View>
+            <View style={styles.buttonContainer}>
+              <CustomButton title={'Remove Checked'} icon={'minus'} onPressFunction={deleteCheckedItems}/>
+            </View>
         </View>
     )
 } 
@@ -16,6 +20,9 @@ const styles = StyleSheet.create({
     buttonRow: {
       flexDirection: 'row', //Makes buttons into a row instead of stacking
       justifyContent: 'center', //Centers buttons
+    },
+    buttonContainer: {
+      margin: 10
     }
   });
 

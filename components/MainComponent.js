@@ -20,10 +20,10 @@ class Main extends Component {
             storesArray: [],//Initial stores array. Use STORES for pre-filled array, otherwise use []          
             addItemOverlayVisible: false,
             addInput: '',//State for input from "addItem" overlay and "addStore" overlay. This same state can be used for both because they are never active at the same time
-            textInputPlaceholder: 'Enter item', //State for resetting the "placeholder" value when "addItem" <Overlay> is activated (could be a constant below instead of state?)
+            textInputPlaceholder: 'Add item', //State for resetting the "placeholder" value when "addItem" <Overlay> is activated (could be a constant below instead of state?)
             selectedStore: '', //State for holding the text string of storeName selected in "addItem" <Overlay>
             addStoreOverlayVisible: false, //
-            addStoreTextInputPlaceholder: 'Enter store'//State for resetting the "placeholder" value when "addStore" <Overlay> is activated (could be a constant below instead of state?)
+            addStoreTextInputPlaceholder: 'Add store'//State for resetting the "placeholder" value when "addStore" <Overlay> is activated (could be a constant below instead of state?)
         };
         this.getData('itemArray', 'storesArray');  //Function to retrieve any data stored under the keys "itemArray" and "storesArray", called when the application is first constructed
     }
@@ -121,7 +121,7 @@ class Main extends Component {
     //Function to change the current state of the Add Item <Overlay>'s visibility
     toggleAddItemOverlay = () => {
         this.setState({addItemOverlayVisible: !this.state.addItemOverlayVisible});
-        this.setState({textInputPlaceholder: 'Enter item', addInput: ''}) //Resets the <Input> text field in the "addItem" <Overlay>
+        this.setState({textInputPlaceholder: 'Add item', addInput: ''}) //Resets the <Input> text field in the "addItem" <Overlay>
         this.storeDeselect() //Run the "storeDeselect" function to deselect any stores that user may have selected while using <Overlay>
     }
 
@@ -147,14 +147,14 @@ class Main extends Component {
                 }
             )
             this.toast(`${this.state.addInput} added!`); //Notify user that item was added successfully
-            this.setState({textInputPlaceholder: 'Enter item', addInput: '', itemArray: updatedItemArray}, () => {this.storeData(this.state.itemArray, 'itemArray')})//Resets the <Input> text field in the "addItem" <Overlay>, replace the current "itemArray" in state with the "updatedItemArray" i.e. an array with the additional item object. After that operation is completed, execute the callback function which stores the "itemArray" in state under the key 'itemArray'.
+            this.setState({textInputPlaceholder: 'Add item', addInput: '', itemArray: updatedItemArray}, () => {this.storeData(this.state.itemArray, 'itemArray')})//Resets the <Input> text field in the "addItem" <Overlay>, replace the current "itemArray" in state with the "updatedItemArray" i.e. an array with the additional item object. After that operation is completed, execute the callback function which stores the "itemArray" in state under the key 'itemArray'.
         }
     } 
 
     //Function to change the current state of the Add Store overlay's visibility
     toggleAddStoreOverlay = () => {
         this.setState({addStoreOverlayVisible: !this.state.addStoreOverlayVisible});
-        this.setState({addStoreTextInputPlaceholder: 'Enter store', addInput: ''}) //Resets the <Input> text field in the "addStore" <Overlay>
+        this.setState({addStoreTextInputPlaceholder: 'Add store', addInput: ''}) //Resets the <Input> text field in the "addStore" <Overlay>
         this.storeDeselect() //Run the "storeDeselect" function to deselect any stores that user may have selected while using <Overlay>
     }
 
@@ -181,7 +181,7 @@ class Main extends Component {
                     }
                 )
                 this.toast(`${this.state.addInput} added!`);//Notify user that store was added successfully
-                this.setState({addStoretextInputPlaceholder: 'Enter store', addInput: '', storesArray: updatedStoresArray}, () => {this.storeData(this.state.storesArray, 'storesArray')})//Resets the <Input> text field in the "addStore" <Overlay>, replace the current "storesArray" in state with the "updatedStoresArray" i.e. an array of all stores that were not selected. After that operation is completed, execute the callback function which stores the "storesArray" in state under the key 'storesArray'.
+                this.setState({addStoretextInputPlaceholder: 'Add store', addInput: '', storesArray: updatedStoresArray}, () => {this.storeData(this.state.storesArray, 'storesArray')})//Resets the <Input> text field in the "addStore" <Overlay>, replace the current "storesArray" in state with the "updatedStoresArray" i.e. an array of all stores that were not selected. After that operation is completed, execute the callback function which stores the "storesArray" in state under the key 'storesArray'.
             } else { //If there is something in the "storeCheckArray", "else" statement will be entered
                 this.toast(`${this.state.addInput} already exists!`);//Notify user that store has already been added
             }
