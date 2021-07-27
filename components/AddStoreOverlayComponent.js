@@ -27,7 +27,7 @@ const AddStoreOverlay = (props) => {
                 />
             </View>
             <View style={styles.submitButtonContainer}>
-                <CustomButton title={null} icon={'check'} onPressFunction={props.addStoreSubmit} /*"title" is "null" because icon only is needed*//>
+                <CustomButton title={null} icon={'check'} onPressFunction={props.addStoreSubmit} marginLeft={0}/*"title" is "null" because icon only is needed*//>
             </View>
 
             <View style={styles.storeContainer}>
@@ -36,7 +36,7 @@ const AddStoreOverlay = (props) => {
                 <StoreList storesArray={props.storesArray} storeSelect={props.storeSelect} /*Pass the "storesArray" and "storeSelect" function to the <StoreList> component which will pass each object in the "storesArray" and the "storeSelect" function to the <StoreListItem> component*//>     
             </View>
             <View style={styles.removeButtonContainer}>
-                <CustomButton title={null} icon={'minus'} onPressFunction={props.removeStore} /*"title" is "null" because icon only is needed*//>
+                <CustomButton title={null} icon={'minus'} onPressFunction={props.removeStore} marginLeft={0} /*"title" is "null" because icon only is needed*//>
             </View>
         </Overlay>
     )

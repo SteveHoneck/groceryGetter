@@ -2,12 +2,12 @@ import React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { Button, Icon } from 'react-native-elements'
 
-const CustomButton = ({title, icon, onPressFunction}) => { //Receives the "title", "icon" name, and "onPressFunction" (which is either "deleteCheckedItems" function or "toggleAddItemOverlay" function) from "FooterComponent". Receives also from <Overlay>s.
+const CustomButton = ({title, icon, onPressFunction, marginLeft}) => { //Receives the "title", "icon" name, and "onPressFunction" (which is either "deleteCheckedItems" function or "toggleAddItemOverlay" function) from "FooterComponent". Receives also from <Overlay>s.
     return (
         <Button
         icon = {
             <Icon 
-                style={styles.icon}
+                style={{marginLeft: marginLeft}}
                 type='font-awesome-5'
                 name={icon}
             />
@@ -27,9 +27,9 @@ const styles = StyleSheet.create({
       width: 175,
       backgroundColor: "yellowgreen",
     },
-    icon: {
-        marginLeft: 20
-    },
+    //icon: {
+       // marginLeft: 20
+   // },
     title: {
         color: "black"
     }
