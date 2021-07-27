@@ -38,6 +38,7 @@ function List( {itemArray, storesArray, checkBoxToggle} ) { //receives array of 
           )}
           stickySectionHeadersEnabled={true}
           ListEmptyComponent={<Text>Add a store to get started!</Text>} //Only shows up when there are no items OR stores in list
+          persistentScrollbar={true}//Makes the vertical scroll bar always visible so that user knows if there are more items on list than are currently visible
         />
       </Animatable.View>
     )

@@ -212,8 +212,10 @@ class Main extends Component {
                         <Header toggleAddStoreOverlay={this.toggleAddStoreOverlay} />
                     </View>
                     
-                    <List itemArray={this.state.itemArray} storesArray={this.state.storesArray} checkBoxToggle={this.checkBoxToggle} /> 
-                    
+                    <View style={styles.wrapper}>
+                        <List itemArray={this.state.itemArray} storesArray={this.state.storesArray} checkBoxToggle={this.checkBoxToggle} /> 
+                    </View>
+
                     <View style={styles.footer}>
                         <Footer deleteCheckedItems={this.deleteCheckedItems} toggleAddItemOverlay={this.toggleAddItemOverlay}/>
                     </View>
@@ -255,21 +257,23 @@ const styles = StyleSheet.create({
     wrapper: {
       flex: 1,
     },
-    header: { //Should "header" styles be moved to <View> in "HeaderComponent" and <View> around <Header> be removed from "MainComponent"? 
+    header: { //~~~!!!~~~Should "header" styles be moved to <View> in "HeaderComponent" and <View> around <Header> be removed from "MainComponent"? 
+        flex: 1, //Adds proper flex box separation from <List> and <Footer>
         width: '100%',
-        height: 75,
+        maxHeight: 75, //Causes header to not 'flex' beyond 75 pixels. Result is that the separation from other components due to flex box is maintained, but the vertical size is set as opposed to being calculated by flex box.
+        minHeight: 75,
         backgroundColor: 'green',
         justifyContent: 'center',
-        //position: 'absolute', 
-        top: 0
+        //'position: 'absolute'' & 'top: 0' were needed for sticky header before flex box was used
     },
-    footer: { //Should "footer" styles be moved to <View> in "FooterComponent" and <View> around <Footer> be removed from "MainComponent"?
-      width: '100%',
-      height: 75,
-      backgroundColor: 'green',
-      justifyContent: 'center',
-      position: 'absolute', //Needed to push footer to the bottom when the list of items is empty 
-      bottom: 0
+    footer: { //~~~!!!~~~Should "footer" styles be moved to <View> in "FooterComponent" and <View> around <Footer> be removed from "MainComponent"?
+        flex: 1, //Adds proper flex box separation from <Header> and <List>
+        width: '100%',
+        maxHeight: 75, //Causes footer to not 'flex' beyond 75 pixels. Result is that the separation from other components due to flex box is maintained, but the vertical size is set as opposed to being calculated by flex box.
+        minHeight: 75,
+        backgroundColor: 'green',
+        justifyContent: 'center',
+        //'position: 'absolute'' & 'bottom: 0' were needed for sticky footer before flex box was used
     },
     isChecked: { //~~~!!!~~~Should this be moved to "ListItemComponent" and called differently in "checkBoxToggle"?
         textDecorationLine: 'line-through',
