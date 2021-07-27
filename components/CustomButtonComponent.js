@@ -27,9 +27,6 @@ const styles = StyleSheet.create({
       width: 175,
       backgroundColor: "yellowgreen",
     },
-    //icon: {
-       // marginLeft: 20
-   // },
     title: {
         color: "black"
     }
