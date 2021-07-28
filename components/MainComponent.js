@@ -61,7 +61,7 @@ class Main extends Component {
             ToastAndroid.SHORT,
             ToastAndroid.TOP,
             0,
-            100 //Y-offset of Toast, set to be close to typing area so User notices it
+            37.5 //Vertical offset of Toast, set to be close to typing area so User notices it & in the middle of the <Header> so there is high contrast
         );
     }
 
@@ -114,8 +114,13 @@ class Main extends Component {
 
     //Function "deleteCheckedItems"  to delete all checked items (make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent")
     deleteCheckedItems = () => { 
+        const isAnytingSelected = this.state.itemArray.find( obj => obj.isChecked === true ); //Check if "itemArray" in state for anything that has been selected. ".find" will return the first object that has "isChecked = true", otherwise 'undefined' will be returned.
+        if ( !isAnytingSelected ) { //If "isAnythingSelected" is falsy (i.e. ".find" returned 'undefined', which is a falsy value), tell user to select an item
+            this.toast('Select an item to remove!');
+        } else { //enter block if "isAnythingSelected" is truthy (i.e. ".find" returned an object)
         const updatedItemArray = this.state.itemArray.filter( obj => obj.isChecked === false ); //Make a copy of the "itemArray" in state, rename it "updatedItemArray", filters the"updateItemArray" (which at this point is what is currently in state) for all objects that have "isChecked" property as "false". This returns an array of objects that do not have their check boxes marked.
         this.setState({itemArray: updatedItemArray}, ()=>{this.storeData(this.state.itemArray, 'itemArray')}); //replace the current "itemArray" in state with the "updatedItemArray" i.e. an array of all items that are unchecked. After that operation is completed, execute the callback function which stores the "itemArray" in state under the key 'itemArray'.
+        }
     }
 
     //Function to change the current state of the Add Item <Overlay>'s visibility

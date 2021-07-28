@@ -10,7 +10,7 @@ const Footer = ({deleteCheckedItems, toggleAddItemOverlay}) => { //Pass "deleteC
               <CustomButton title={'Add Item'} icon={'plus'} onPressFunction={toggleAddItemOverlay} marginLeft={20} />
             </View>
             <View style={styles.buttonContainer}>
-              <CustomButton title={'Remove Checked'} icon={'minus'} onPressFunction={deleteCheckedItems} marginLeft={20}/>
+              <CustomButton title={'Remove Items'} icon={'minus'} onPressFunction={deleteCheckedItems} marginLeft={20}/>
             </View>
         </View>
     )
