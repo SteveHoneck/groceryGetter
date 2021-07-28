@@ -34,10 +34,10 @@ function List( {itemArray, storesArray, checkBoxToggle} ) { //receives array of 
           keyExtractor={(item, index) => item + index}
           renderItem={({ item }) => <ListItem item={item} checkBoxToggle={checkBoxToggle}/>} //"renderItem" takes the "data" property from the current iteration object in "sections" ("sectionListArray"), names it "item" and passes it to <ListItem> component
           renderSectionHeader={({ section: { title } }) => (
-            <Text style={styles.header}>{title}</Text> 
+            <Text style={styles.sectionHeader}>{title}</Text> 
           )}
           stickySectionHeadersEnabled={true}
-          ListEmptyComponent={<Text>Add a store to get started!</Text>} //Only shows up when there are no items OR stores in list
+          ListEmptyComponent={<Text style={styles.listEmptyText}>Add a store to get started!</Text>} //Only shows up when there are no items OR stores in list
           persistentScrollbar={true}//Makes the vertical scroll bar always visible so that user knows if there are more items on list than are currently visible
         />
       </Animatable.View>
@@ -45,11 +45,17 @@ function List( {itemArray, storesArray, checkBoxToggle} ) { //receives array of 
 }
 
 const styles = StyleSheet.create({
-    header: {
+    sectionHeader: {
       backgroundColor: 'white',
       fontSize: 20,
       marginLeft: 10,
       paddingVertical: 5
+    },
+    listEmptyText: {
+      fontSize: 20,
+      textAlign: 'center',
+      marginTop: '50%', //Moves the text down. Not sure what the 50% is measured from and as a result, text does not appear in the exact middle of the screen. To make text in the middle, add style "justifyContent: 'center'" to the parent <View> of <List> in main component (however doing that also centers the list of stores and items which is not desired, want those to always start at the top) (could pass that style property back to "MainComponent" on condition that "ListEmptyComponent" is displayed) 
+      color: 'lightgray',
     }
   });
 
