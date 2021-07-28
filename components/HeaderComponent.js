@@ -16,7 +16,7 @@ const Header = ({ toggleAddStoreOverlay }) => {
     return (
         <View style={styles.wrapper}>
             <View style={{flex: 1}}>
-                <Text style={styles.text}>GroceryGetter</Text>
+                <Text style={[styles.text, styles.logoText]}>GroceryGetter</Text>
             </View>
             <View style={[{flex: 1 }, styles.rightBox]}>
                 <Text style={styles.text} onPress={loginToast}>Login</Text>
@@ -38,9 +38,14 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
         justifyContent: 'center',
     },
+    logoText: {
+        fontSize: 24,
+        fontStyle: 'italic',
+    },
     text: {
         color: "white",
-        fontSize: 16
+        fontSize: 16,
+        marginHorizontal: 10, marginVertical: 2.5
     }
 
 

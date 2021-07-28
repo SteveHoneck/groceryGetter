@@ -47,6 +47,9 @@ function List( {itemArray, storesArray, checkBoxToggle} ) { //receives array of 
 const styles = StyleSheet.create({
     header: {
       backgroundColor: 'white',
+      fontSize: 20,
+      marginLeft: 10,
+      paddingVertical: 5
     }
   });
 

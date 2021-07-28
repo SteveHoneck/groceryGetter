@@ -27,11 +27,11 @@ const ListItem = (props) => { //props will be "checkBoxToggle" function and one 
 
 
 const styles = StyleSheet.create({
-    checkBoxRow: { //Make list of checkboxes more tightly packed
-        paddingTop: 5,
-        paddingBottom: 5,
-        marginTop: 2.5,
-        marginBottom: 2.5
+    checkBoxRow: { //Make list of checkboxes more tightly packed & have larger Left and Right margins
+        paddingVertical: 5,
+        marginVertical: 2.5,
+        marginLeft: 20, //Left and Right can't be combined to "marginHorizontal" and have proper effect
+        marginRight: 20,
     }
 })
 
