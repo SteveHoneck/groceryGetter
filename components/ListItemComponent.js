@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     listEmptyText: {
         fontSize: 16,
         marginLeft: 20,
-        color: 'lightgray',
+        color: 'gray',
     }
 })
 

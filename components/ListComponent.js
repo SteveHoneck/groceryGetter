@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
       fontSize: 20,
       textAlign: 'center',
       marginTop: '50%', //Moves the text down. Not sure what the 50% is measured from and as a result, text does not appear in the exact middle of the screen. To make text in the middle, add style "justifyContent: 'center'" to the parent <View> of <List> in main component (however doing that also centers the list of stores and items which is not desired, want those to always start at the top) (could pass that style property back to "MainComponent" on condition that "ListEmptyComponent" is displayed) 
-      color: 'lightgray',
+      color: 'black',
     }
   });
 

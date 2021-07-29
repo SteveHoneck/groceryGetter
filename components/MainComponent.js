@@ -4,7 +4,7 @@ import { DATA } from '../shared/data';
 import List from './ListComponent';
 import Header from './HeaderComponent';
 import Footer from './FooterComponent';
-import { View, StyleSheet, ToastAndroid } from 'react-native';
+import { View, StyleSheet, ToastAndroid, ImageBackground } from 'react-native';//<ImageBackground> attribution: <a href="https://www.vecteezy.com/free-vector/food-pattern">Food Pattern Vectors by Vecteezy</a>
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AddItemOverlay from './AddItemOverlayComponent';
 import AddStoreOverlay from './AddStoreOverlayComponent';
@@ -211,48 +211,50 @@ class Main extends Component {
     render() {
         return ( // <List> is passed the array of items "itemArray", and the function to toggle the checkbox "checkBoxToggle" to the "List" component. <Footer> is passed the "deleteCheckedItems" function. 
             <SafeAreaView style={styles.wrapper}>
-                <View style={styles.wrapper}>
-                    
-                    <View style={styles.header}> 
-                        <Header toggleAddStoreOverlay={this.toggleAddStoreOverlay} />
-                    </View>
-                    
+                <ImageBackground  source={require('../assets/HealthyFood_07.jpg')} resizeMode="cover" style={styles.imageBackground} imageStyle={{opacity: 0.15}} /*Opacity must be added via "imageStyle". If added via "style", all children will inherit opacity*/ >
                     <View style={styles.wrapper}>
-                        <List itemArray={this.state.itemArray} storesArray={this.state.storesArray} checkBoxToggle={this.checkBoxToggle} /> 
-                    </View>
+                        
+                        <View style={styles.header}> 
+                            <Header toggleAddStoreOverlay={this.toggleAddStoreOverlay} />
+                        </View>
+                        
+                        <View style={styles.wrapper}>
+                            <List itemArray={this.state.itemArray} storesArray={this.state.storesArray} checkBoxToggle={this.checkBoxToggle} /> 
+                        </View>
 
-                    <View style={styles.footer}>
-                        <Footer deleteCheckedItems={this.deleteCheckedItems} toggleAddItemOverlay={this.toggleAddItemOverlay}/>
-                    </View>
+                        <View style={styles.footer}>
+                            <Footer deleteCheckedItems={this.deleteCheckedItems} toggleAddItemOverlay={this.toggleAddItemOverlay}/>
+                        </View>
+                        
+                        <View>
+                            <AddItemOverlay 
+                                isVisible={this.state.addItemOverlayVisible} 
+                                toggleAddItemOverlay={this.toggleAddItemOverlay} 
+                                placeholder={this.state.textInputPlaceholder} 
+                                onChangeText={text => this.setState({addInput: text})} 
+                                value={this.state.addInput} 
+                                storesArray={this.state.storesArray} 
+                                storeSelect={this.storeSelect} 
+                                addItemSubmit={this.addItemSubmit} /*All state values and all functions that are needed by the <AddItemOverlay> are passed*/ 
+                            />
+                        </View>
+                        
+                        <View>
+                            <AddStoreOverlay 
+                                isVisible={this.state.addStoreOverlayVisible}
+                                toggleAddStoreOverlay={this.toggleAddStoreOverlay}
+                                placeholder={this.state.addStoreTextInputPlaceholder}
+                                onChangeText={text => this.setState({addInput: text})}
+                                value={this.state.addInput}
+                                storesArray={this.state.storesArray} 
+                                storeSelect={this.storeSelect}
+                                addStoreSubmit={this.addStoreSubmit}
+                                removeStore={this.removeStore} /*All state values and all functions that are needed by the <AddItemOverlay> are passed*/    
+                            />
+                        </View>
                     
-                    <View>
-                        <AddItemOverlay 
-                            isVisible={this.state.addItemOverlayVisible} 
-                            toggleAddItemOverlay={this.toggleAddItemOverlay} 
-                            placeholder={this.state.textInputPlaceholder} 
-                            onChangeText={text => this.setState({addInput: text})} 
-                            value={this.state.addInput} 
-                            storesArray={this.state.storesArray} 
-                            storeSelect={this.storeSelect} 
-                            addItemSubmit={this.addItemSubmit} /*All state values and all functions that are needed by the <AddItemOverlay> are passed*/ 
-                        />
                     </View>
-                    
-                    <View>
-                        <AddStoreOverlay 
-                            isVisible={this.state.addStoreOverlayVisible}
-                            toggleAddStoreOverlay={this.toggleAddStoreOverlay}
-                            placeholder={this.state.addStoreTextInputPlaceholder}
-                            onChangeText={text => this.setState({addInput: text})}
-                            value={this.state.addInput}
-                            storesArray={this.state.storesArray} 
-                            storeSelect={this.storeSelect}
-                            addStoreSubmit={this.addStoreSubmit}
-                            removeStore={this.removeStore} /*All state values and all functions that are needed by the <AddItemOverlay> are passed*/    
-                        />
-                    </View>
-
-                </View>
+                </ImageBackground>
             </SafeAreaView>
         )
     }
@@ -260,7 +262,11 @@ class Main extends Component {
 
 const styles = StyleSheet.create({
     wrapper: {
-      flex: 1,
+        flex: 1,
+    },
+    imageBackground: {
+        flex: 1,
+        justifyContent: "center",
     },
     header: { //~~~!!!~~~Should "header" styles be moved to <View> in "HeaderComponent" and <View> around <Header> be removed from "MainComponent"? 
         flex: 1, //Adds proper flex box separation from <List> and <Footer>

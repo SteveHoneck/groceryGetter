@@ -23,7 +23,8 @@ function StoreList( {storesArray, storeSelect} ) { //receives array of stores "s
 
 const styles = StyleSheet.create({
     listEmptyText: {
-        color: 'darkgray'
+        color: 'darkgray',
+        textAlign: 'center'
     },
     contentContainer: {
         width: 125, //Sets the width of the list, without this property, the width of the list would snap to the length of the longest store
