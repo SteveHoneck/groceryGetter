@@ -19,7 +19,7 @@ const AddItemOverlay = (props) => {
         >
             <View style={styles.textInputContainer}>
                 <TextInput 
-                    placeholder={props.placeholder} //Text to show when nothing in entered in the text field
+                    placeholder={props.placeholder} //Text to show when nothing is entered in the text field
                     autoFocus={true}
                     onChangeText={props.onChangeText} //When text is entered into the input field, "onChangeText" assigns that text to the variable "text", passes it to the function that sets the state value of "addInput" to that text. The input field WILL accept and display entered text WITHOUT "onChangeText"
                     value={props.value} //This is the value that will be shown and captured in the text input field. Initialized in state of "MainComonent" as an empty string so that the "placeholder" will show. Used in conjunction with "onChangeText" where "onChangeText" function sets the text input in state in "MainComponent", "value" captures the state as the value that will be submitted. 

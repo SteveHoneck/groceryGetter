@@ -19,7 +19,7 @@ const AddStoreOverlay = (props) => {
         >
             <View style={styles.textInputContainer}>
                 <TextInput
-                    placeholder={props.placeholder}//Text to show when nothing in entered in the text field
+                    placeholder={props.placeholder}//Text to show when nothing is entered in the text field
                     autoFocus={true}
                     onChangeText={props.onChangeText}//Operates in same manner as "addItem"
                     value={props.value}//Operates in same manner as "addItem"
