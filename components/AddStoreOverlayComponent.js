@@ -11,10 +11,10 @@ const AddStoreOverlay = (props) => {
     return(
         <Overlay 
         isVisible={props.isVisible}
-        onBackdropPress={props.toggleAddStoreOverlay} //Function activated when space outside the overlay is touched
+        onBackdropPress={() => props.toggleOverlay('addStoreOverlayVisible')} //Function activated when space outside the overlay is touched. Call the 'toggleOverlay' function and pass it the string 'addStoreOverlayVisible' which will be interperted by the function as the state key/value pair to be toggled
         animationType={'fade'} //Built in (from React Modal component), there are a few options
         transparent={true} //Makes the overlay backdrop transparent
-        onRequestClose={() => props.toggleAddStoreOverlay()} //Funciton that will be run when hardware back button is pressed
+        onRequestClose={() => props.toggleOverlay('addStoreOverlayVisible')} //Function that will be run when hardware back button is pressed
         overlayStyle={styles.overlay} //Style of the actual overlay
         >
             <View style={styles.textInputContainer}>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View, StyleSheet, ToastAndroid } from 'react-native';
 
-const Header = ({ toggleAddStoreOverlay }) => {
+const Header = ({ toggleOverlay }) => {
     
     const loginToast = () => { //Remove when login functionality is added
         ToastAndroid.showWithGravityAndOffset(
@@ -20,7 +20,7 @@ const Header = ({ toggleAddStoreOverlay }) => {
             </View>
             <View style={[{flex: 1 }, styles.rightBox]}>
                 <Text style={styles.text} onPress={loginToast}>Login</Text>
-                <Text style={styles.text} onPress={toggleAddStoreOverlay}>Add/Remove Store</Text>
+                <Text style={styles.text} onPress={() => toggleOverlay('addStoreOverlayVisible')/*Call the 'toggleOverlay' function and pass it the string 'addStoreOverlayVisible' which will be interperted by the function as the state key/value pair to be toggled*/}>Add/Remove Store</Text>
             </View>
         </View>
     )

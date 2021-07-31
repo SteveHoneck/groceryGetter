@@ -121,9 +121,9 @@ class Main extends Component {
         }
     }
 
-    //Function to change the current state of the Add Item <Overlay>'s visibility
-    toggleAddItemOverlay = () => {
-        this.setState({addItemOverlayVisible: !this.state.addItemOverlayVisible, addInput: ''});//Toggle visibility of <Overlay> and reset the text in state that is displayed in the <TextInput> and used to add an item/store
+    //Function to change the current state of an <Overlay>'s visibility
+    toggleOverlay = (overlayToToggle) => { //Argument is expected to be a string that is one of the state keys used to track an <Overlay>'s visiblility ('addItemOverlayVisible' or 'addStoreOverlayVisible') and renamed "overlayToToggle". Everywhere "toggleOverlay" is passed, it is passed as an arrow function call: '() => toggleOverlay(argument)'. When it was passed as a direct function call (i.e. 'toggleOverlay(argument)' ) some instances would cause an infinate loop during rendering.
+        this.setState({[overlayToToggle]: !this.state[overlayToToggle], addInput: ''}) //Toggle visibility of <Overlay> and reset the text in state that is displayed in the <TextInput> and used to add an item/store. This line calls "setState" and uses bracket notation to set the state of string that is passed into the "toggleOverlay" function. State is an object. Bracket notation references things in objects via "object[property_name]" where 'property_name' is a string. In typical dot notation 'object.property_name', 'property_name' must be a JS Identifier, not a string. Therefore, since a string is passed into this function, it can only be used to reference a state property through bracket notation.  
         this.storeDeselect() //Run the "storeDeselect" function to deselect any stores that user may have selected while using <Overlay>
     }
 
@@ -152,12 +152,6 @@ class Main extends Component {
             this.setState({addInput: '', itemArray: updatedItemArray}, () => {this.storeData(this.state.itemArray, 'itemArray')})//Resets the text in state that is displayed in the <TextInput> and used to add an item/store, replace the current "itemArray" in state with the "updatedItemArray" i.e. an array with the additional item object. After that operation is completed, execute the callback function which stores the "itemArray" in state under the key 'itemArray'.
         }
     } 
-
-    //Function to change the current state of the Add Store overlay's visibility
-    toggleAddStoreOverlay = () => {
-        this.setState({addStoreOverlayVisible: !this.state.addStoreOverlayVisible, addInput: ''});//Toggle the visibility of <Overlay> and reset the text in state that is displayed in the <TextInput> and used to add an item/store
-        this.storeDeselect() //Run the "storeDeselect" function to deselect any stores that user may have selected while using <Overlay>
-    }
 
     //Function "addStoreSubmit" to submit info from "addStore" <Overlay>  (make arrow function so don't have to bind)
     addStoreSubmit = () => { //Function with two "if" statements. Outer "if" statement checks that there is ANY user input. Inner "if" statement checks if the store has already been added.
@@ -211,7 +205,7 @@ class Main extends Component {
                     <View style={styles.wrapper}>
                         
                         <View style={styles.header}> 
-                            <Header toggleAddStoreOverlay={this.toggleAddStoreOverlay} />
+                            <Header toggleOverlay={this.toggleOverlay} />
                         </View>
                         
                         <View style={styles.wrapper}>
@@ -219,13 +213,13 @@ class Main extends Component {
                         </View>
 
                         <View style={styles.footer}>
-                            <Footer deleteCheckedItems={this.deleteCheckedItems} toggleAddItemOverlay={this.toggleAddItemOverlay}/>
+                            <Footer deleteCheckedItems={this.deleteCheckedItems} toggleOverlay={this.toggleOverlay}/>
                         </View>
                         
                         <View>
                             <AddItemOverlay 
                                 isVisible={this.state.addItemOverlayVisible} 
-                                toggleAddItemOverlay={this.toggleAddItemOverlay} 
+                                toggleOverlay={this.toggleOverlay} 
                                 placeholder={'Add item'} 
                                 onChangeText={text => this.setState({addInput: text})} 
                                 value={this.state.addInput} 
@@ -238,7 +232,7 @@ class Main extends Component {
                         <View>
                             <AddStoreOverlay 
                                 isVisible={this.state.addStoreOverlayVisible}
-                                toggleAddStoreOverlay={this.toggleAddStoreOverlay}
+                                toggleOverlay={this.toggleOverlay}
                                 placeholder={'Add store'}
                                 onChangeText={text => this.setState({addInput: text})}
                                 value={this.state.addInput}

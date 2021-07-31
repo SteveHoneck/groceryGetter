@@ -11,10 +11,10 @@ const AddItemOverlay = (props) => {
     return(
         <Overlay
             isVisible={props.isVisible}
-            onBackdropPress={props.toggleAddItemOverlay}
+            onBackdropPress={() => props.toggleOverlay('addItemOverlayVisible') /*Call the 'toggleOverlay' function and pass it the string 'addItemOverlayVisible' which will be interperted by the function as the state key/value pair to be toggled*/ }
             animationType={'fade'}
             transparent={true}
-            onRequestClose={() => props.toggleAddItemOverlay()}
+            onRequestClose={() => props.toggleOverlay('addItemOverlayVisible')}
             overlayStyle={styles.overlay}
         >
             <View style={styles.textInputContainer}>
