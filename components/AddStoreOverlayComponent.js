@@ -44,8 +44,10 @@ const AddStoreOverlay = (props) => {
 
 
 const styles = StyleSheet.create({
-    overlay: { //<Overlay> continer auto-adjusts to inner contents because "height" and "width" is not defined
+    overlay: { //<Overlay> container auto-adjusts to inner contents because "height" and "width" is not defined
         alignItems: "center",
+        position: "absolute", //Combination of 'position' and 'top' fixes overlay to a spot on the screen and keeps the <Overlay> from moving when the keyboard appears/disappears 
+        top: 85
     },
     textInputContainer: {
         alignItems: "center",
