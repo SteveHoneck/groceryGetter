@@ -9,7 +9,7 @@ const Header = ({ toggleOverlay }) => {
             ToastAndroid.SHORT,
             ToastAndroid.TOP,
             0,
-            100 //Y-offset of Toast, set to be close to typing area so User notices it
+            37.5 //Y-offset of Toast, set to be close to typing area so User notices it
         );
     }
 

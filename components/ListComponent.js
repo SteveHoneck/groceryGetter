@@ -29,27 +29,30 @@ function List( {itemArray, storesArray, checkBoxToggle} ) { //receives array of 
     }
     
     return(
-      <Animatable.View animation='slideInLeft' duration={1500} /*Causes entire <SectionList> to slide into view when rendered (which is on application initial load only)*/>
         <SectionList
           sections={sectionListArray}
           keyExtractor={(item, index) => item + index}
-          renderItem={({ item }) => <ListItem item={item} checkBoxToggle={checkBoxToggle}/>} //"renderItem" takes the "data" property from the current iteration object in "sections" ("sectionListArray"), names it "item" and passes it to <ListItem> component
+          renderItem={({ item }) => 
+            <Animatable.View animation='slideInLeft' duration={1500} /*Causes entire <SectionList> to slide into view when rendered (which is on application initial load only)*/>
+              <ListItem item={item} checkBoxToggle={checkBoxToggle} /*"renderItem" takes the "data" property from the current iteration object in "sections" ("sectionListArray"), names it "item" and passes it to <ListItem> component*/ /> 
+            </Animatable.View>}
           renderSectionHeader={({ section: { title } }) => (
-            <LinearGradient
-              start={{x: 0, y: 0}} 
-              end={{x: 1, y: 0}} //Set 'start' 'x: 0' and 'end' 'x: 1' to make gradient horizontal
-              colors={['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']} //Colors all white with varying opacity. 
-              locations={[0.0, 0.035, .4, 1]} //Stop locations of the corresponding colors in 'colors' array
-              style={styles.linearGradient}
-            >
-              <Text style={styles.sectionHeader}>{title}</Text> 
-            </LinearGradient>  
+            <Animatable.View animation='slideInLeft' duration={1500}>
+              <LinearGradient
+                start={{x: 0, y: 0}} 
+                end={{x: 1, y: 0}} //Set 'start' 'x: 0' and 'end' 'x: 1' to make gradient horizontal
+                colors={['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']} //Colors all white with varying opacity. 
+                locations={[0.0, 0.035, .4, 1]} //Stop locations of the corresponding colors in 'colors' array
+                style={styles.linearGradient}
+              >
+                <Text style={styles.sectionHeader}>{title}</Text> 
+              </LinearGradient>
+            </Animatable.View>  
             )}
           stickySectionHeadersEnabled={true}
           ListEmptyComponent={<Text style={styles.listEmptyText}>Add a store to get started!</Text>} //Only shows up when there are no items OR stores in list
           persistentScrollbar={true}//Makes the vertical scroll bar always visible so that user knows if there are more items on list than are currently visible
         />
-      </Animatable.View>
     )
 }
 
