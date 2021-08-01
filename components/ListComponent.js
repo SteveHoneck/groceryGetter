@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, View, StyleSheet, SectionList } from 'react-native';
 import ListItem from './ListItemComponent';
 import * as Animatable from 'react-native-animatable';
+import { LinearGradient } from 'expo-linear-gradient';
 
 function List( {itemArray, storesArray, checkBoxToggle} ) { //receives array of items "itemArray", array of stores "storesArray" & function "checkBoxToggle" as props from main. "for" loop combines the "itemArray" and "storesArray" into an array called "sectionListArray" that can be used by <SectionList>. "checkBoxToggle" is passed directly to "ListItemComponent". 
     let sectionListArray = [] //Initalize an empty array to be used by <SectionList>
@@ -34,8 +35,16 @@ function List( {itemArray, storesArray, checkBoxToggle} ) { //receives array of 
           keyExtractor={(item, index) => item + index}
           renderItem={({ item }) => <ListItem item={item} checkBoxToggle={checkBoxToggle}/>} //"renderItem" takes the "data" property from the current iteration object in "sections" ("sectionListArray"), names it "item" and passes it to <ListItem> component
           renderSectionHeader={({ section: { title } }) => (
-            <Text style={styles.sectionHeader}>{title}</Text> 
-          )}
+            <LinearGradient
+              start={{x: 0, y: 0}} 
+              end={{x: 1, y: 0}} //Set 'start' 'x: 0' and 'end' 'x: 1' to make gradient horizontal
+              colors={['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']} //Colors all white with varying opacity. 
+              locations={[0.0, 0.035, .4, 1]} //Stop locations of the corresponding colors in 'colors' array
+              style={styles.linearGradient}
+            >
+              <Text style={styles.sectionHeader}>{title}</Text> 
+            </LinearGradient>  
+            )}
           stickySectionHeadersEnabled={true}
           ListEmptyComponent={<Text style={styles.listEmptyText}>Add a store to get started!</Text>} //Only shows up when there are no items OR stores in list
           persistentScrollbar={true}//Makes the vertical scroll bar always visible so that user knows if there are more items on list than are currently visible
@@ -46,10 +55,13 @@ function List( {itemArray, storesArray, checkBoxToggle} ) { //receives array of 
 
 const styles = StyleSheet.create({
     sectionHeader: {
-      backgroundColor: 'white',
+      //backgroundColor: 'white',
       fontSize: 20,
       marginLeft: 10,
       paddingVertical: 5
+    },
+    linearGradient: {
+      flex: 1,
     },
     listEmptyText: {
       fontSize: 20,
