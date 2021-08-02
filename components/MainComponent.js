@@ -35,10 +35,10 @@ class Main extends Component {
         try {
           await AsyncStorage.multiRemove(keys)
         } catch(e) {
-          console.log(e)
+          console.log('Error clearing local memory: ', e)
         }
       
-        console.log('Done')
+        console.log('Local memory has been cleared.')
       }
 */
 
@@ -225,7 +225,7 @@ class Main extends Component {
                         </View>
                         
                         <View style={styles.wrapper}>
-                            <List itemArray={this.state.itemArray} storesArray={this.state.storesArray} checkBoxToggle={this.checkBoxToggle} /> 
+                            <List itemArray={this.state.itemArray} storesArray={this.state.storesArray} checkBoxToggle={this.checkBoxToggle} toggleOverlay={this.toggleOverlay} /> 
                         </View>
 
                         <View style={styles.footer}>

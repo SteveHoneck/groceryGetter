@@ -4,7 +4,7 @@ import ListItem from './ListItemComponent';
 import * as Animatable from 'react-native-animatable';
 import { LinearGradient } from 'expo-linear-gradient';
 
-function List( {itemArray, storesArray, checkBoxToggle} ) { //receives array of items "itemArray", array of stores "storesArray" & function "checkBoxToggle" as props from main. "for" loop combines the "itemArray" and "storesArray" into an array called "sectionListArray" that can be used by <SectionList>. "checkBoxToggle" is passed directly to "ListItemComponent". 
+function List( {itemArray, storesArray, checkBoxToggle, toggleOverlay} ) { //receives array of items "itemArray", array of stores "storesArray" & function "checkBoxToggle" as props from main. "for" loop combines the "itemArray" and "storesArray" into an array called "sectionListArray" that can be used by <SectionList>. "checkBoxToggle" is passed directly to "ListItemComponent". 
     
     //Start <SectionList> array build. Builds an array to be used by <SectionList> (Should this be in a function?)
     let sectionListArray = [] //Initalize an empty array to be used by <SectionList>
@@ -57,7 +57,7 @@ function List( {itemArray, storesArray, checkBoxToggle} ) { //receives array of 
             </Animatable.View>  
             )}
           stickySectionHeadersEnabled={true}
-          ListEmptyComponent={<Text style={styles.listEmptyText}>Add a store to get started!</Text>} //Only shows up when there are no items AND stores in list
+          ListEmptyComponent={<Text style={styles.listEmptyText} onPress={() => toggleOverlay('addStoreOverlayVisible')}>Add a store to get started!</Text>} //Only shows up when there are no items AND stores in list
           renderSectionFooter={section => noItemMessage(section)} //Will show up if there is a Store with no items. Making this an arrow function as opposed to a direct function call (i.e. 'this.noItemMessage') allows the animation to happen every time the message displays.
           persistentScrollbar={true}//Makes the vertical scroll bar always visible so that user knows if there are more items on list than are currently visible
         />
