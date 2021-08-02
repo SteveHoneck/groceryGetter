@@ -11,9 +11,9 @@ function List( {itemArray, storesArray, checkBoxToggle} ) { //receives array of 
     let sectionListObject = []
 
     for(let i = 0; i < storesArray.length; i++) { //"for" loop iterates over the "storesArray" picking out each store name
-        let title = storesArray[i].storeName; //"title" will be the "storeName" of the current iteration object from "storesArray"
+        let title = storesArray[i].storeDisplayName; //"title" will be the "storeDisplayName" of the current iteration object from "storesArray"
     
-        let data = itemArray.filter(itemObject => itemObject.storeName === title) //Creates an array called "data" that is an array of objects from the "itemArray" whos "storeName" value matches the current store name (which has been renamed 'title')
+        let data = itemArray.filter(itemObject => itemObject.storeName === storesArray[i].storeName) //Creates an array called "data" that is an array of objects from the "itemArray" whos normalized "storeName" value matches the normalized "storeName" value of the current iteration object from "storesArray".
 
             sectionListObject = { //Create an object that is in the format that can be used by <FlatList>, a string "title" to be rendered as the list section header and "data" that is an array of objects to be rendered as the list items
                 title, //ES6 syntax - since the key and value are the same, 'title: title' can be written as just 'title'

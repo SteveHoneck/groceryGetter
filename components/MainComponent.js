@@ -20,11 +20,27 @@ class Main extends Component {
             storesArray: [],//Initial stores array. Use STORES for pre-filled array, otherwise use []          
             addItemOverlayVisible: false,
             addInput: '',//State for input from "addItem" overlay and "addStore" overlay. This same state can be used for both because they are never active at the same time
-            selectedStore: '', //State for holding the text string of storeName selected in "addItem" <Overlay>
-            addStoreOverlayVisible: false, //
+            selectedStore: '', //State for holding the normalized text string of storeName selected in "addItem" <Overlay>
+            selectedStoreDisplayName: '', //State for holding the text string of the store name as it was typed in by user
+            addStoreOverlayVisible: false, 
         };
+        //this.removeFew(); //DEV CODE: enable this line and "removeFew" function to erase local storage
         this.getData('itemArray', 'storesArray');  //Function to retrieve any data stored under the keys "itemArray" and "storesArray", called when the application is first constructed
     }
+
+/*
+    //DEV CODE: enable "removeFew" function and "this.removeFew()" line in constructor to erase local storage
+    removeFew = async () => {
+        const keys = ['itemArray', 'storesArray']
+        try {
+          await AsyncStorage.multiRemove(keys)
+        } catch(e) {
+          console.log(e)
+        }
+      
+        console.log('Done')
+      }
+*/
 
     //Function for persistent storage of data (data for this application is the array of item objects and array of store objects)
     storeData = async (array, key) => { //Name for function "storeData" can be called anything. Pass in two arguments named "array" (expected to be an array of item objects or store objects), and "key" (expected to be a string)
@@ -81,8 +97,8 @@ class Main extends Component {
     }
 
     //Function to change the current state of the property "selectedStore" and to change the style properties of the selected store within "StoreListItemComponent". "selectedStore" will be a property of a new item when the item is added ((make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent")
-    storeSelect = (storeName) => { //Receives the "storeName" (and renames it "storeName") and "id" properties as arguments from the "storesArray" object that was selected from "StoreListItemComponent"
-        this.setState({selectedStore: storeName}); //replace the current string that is in "selectedStore" state which will be submitted as the "storeName" property in the "addItemSubmit" object
+    storeSelect = (storeName, storeDisplayName) => { //Receives the normalized "storeName" (and renames it "storeName") and "storeDisplayName" (and renames it "storeDisplayName") properties as arguments from the "storesArray" object that was selected from "StoreListItemComponent"
+        this.setState({selectedStore: storeName, selectedStoreDisplayName: storeDisplayName}); //replace the current string that is in "selectedStore" state which will be submitted as the "storeName" property in the "addItemSubmit" object. Replace the current string that is in the "selectedStoreDisplayName" which will be displayed by the toast in the "removeStore" function.
         
         let updatedStoresArray = this.state.storesArray;//Define "updatedStoresArray" as a variable that can be re-assigned, give it initial value of the "storesArray" that is currently in state.
         updatedStoresArray.map( storeObject => { //Iterates through the "updatedStoresArray" (which is an array of objects) and performs the following code on each object which is renamed to "storeObject"
@@ -139,7 +155,7 @@ class Main extends Component {
             updatedItemArray.push( 
                 {
                     id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. 
-                    storeName: this.state.selectedStore, //Set the "storeName" value of the item being added as what is currently in the "selectedStore" state
+                    storeName: this.state.selectedStore, //Set the "storeName" value of the item being added as what is currently in the "selectedStore" state (which is the normalized store name). This state is set in the "storeSelect" function. Items are added with the normalized store name for the following scenario: A store is added "aLdi" (normalized store name of "aldi"), all items are added to that store with "storeName" property of "aldi", store "aLdi" is deleted, store is re-added as "Aldi" (normalized store name of "aldi"), all Items are correctly added to this store because both "aLdi" and "Aldi" have the same normalized store name.
                     item: this.state.addInput, //Could submit "value" from text <Input> field since it is also defined as the state of "addInput", not sure which method is better. 
                     isChecked: false,
                     textStyle: { //Create a "style" object and default styles that will be used by <CheckBox> to style the text after the check box. 
@@ -158,19 +174,19 @@ class Main extends Component {
         let updatedStoresArray = this.state.storesArray; //Initialize "updatedStoresArray" as the stores array currently in state so that it can be changed without mutating the array in state 
 
         if (this.state.addInput) { //Outer "if" statement. If the user has not entered any text, "addInput" will be an empty string which is FALSY and the outer "if" statement will not be entered (a blank item will not be added)
-
-            let storeCheckArray = this.state.storesArray.filter( storeObject => { //This line creates a new array "storeCheckArray" to check if the store to be added is already in the "storesArray" in state. "filter" the "storesArray" in state applying the inner checks to each object in "storesArray". "storeCheckArray" will be an array of length 0 if there is no match. ""
-                let storeName = storeObject.storeName.replace(/\s+/g, ''); //Remove the whitespace from the "storeName" value in the current "storeObject" object and name the resulting string "storeName". Whitespace needs to be removed because if the store was originally added with an accidental whitespace before or after the string, that store will not match with a store being added WITHOUT the accidental whitespace (i.e removes scenario of " Aldi" being entered initially, the string "Aldi" could be entered again)
-                let regex = new RegExp("^[ ]*" + storeName + "[ ]*$", "i"); //Create a dynamic regex that will be used to check against the "addInput": allow any amount of whitespace before the string "storeName" (which changes based on the iteration of the "filter" method) and any amount of whitespace after. "i" is an option to make the regex case insensitive.
-                return regex.test(this.state.addInput) //test the "addInput" against the criteria defined in "regex". Returns true or false: if true, "storeObject" is added to the "storeCheckArray", if "false" nothing added to "storeCheckArray"
-                }
-            )
             
+            let storeName = this.state.addInput.toLowerCase().replace(/\s+/g, '') //Normalized store name: variable "storeName" is created which takes what the user input as the store's name, sets it all to lowercase and removes all whitespace (+ will remove chunks of whitespace at a time, with no +, each space has to be replaced individually)
+
+            let storeCheckArray = this.state.storesArray.filter( storeObject => {//This line creates a new array "storeCheckArray" to check if the store to be added is already in the "storesArray" in state. "filter" the "storesArray" in state by passing each object in renamed as "storeObject" 
+                return storeObject.storeName === storeName; //Check if the normalized "storeName" of the "storeObject" being iterated over is equal to the normalized store name being added. "storeCheckArray" will be an array of length 0 if there is no match.
+            })
+
             if ( (storeCheckArray.length) === 0 ) { //Inner "if" statement. If there is nothing in "storeCheckArray", it will have length of 0 meaning no matches, so enter "if" statment and add the store to the "storesArray" in state
                 updatedStoresArray.push(
                     {
                         id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. 
-                        storeName: this.state.addInput,//Could submit "value" from text <Input> field since it is also defined as the state of "addInput", not sure which method is better. 
+                        storeDisplayName: this.state.addInput,//String AS ENTERED by user. Used for the store name displayed in the <StoreList>. Could submit "value" from text <Input> field since it is also defined as the state of "addInput", not sure which method is better. 
+                        storeName: storeName, //Normalized name of store with all spaces and caps removed. Used for assigning a store to an item.
                         backgroundColor: "white", //Default style to make the store appear un-selected when rendered in <StoreList>
                         color: 'black' //Default style to make the store appear un-selected when rendered in <StoreList>
                     }
@@ -192,7 +208,7 @@ class Main extends Component {
         if (this.state.selectedStore === '') { //Enter statement if there is nothing in the "selectedStore" state, which is denoted by an empty string. "selectedStore" is initially an empty string and returned to an empty string every time "storeDeselect" function is called.
             this.toast('Please select a store!');//Notify user that a store was not selected
         } else {
-            this.toast(`${this.state.selectedStore} removed!`);//Notify user that store was removed successfully
+            this.toast(`${this.state.selectedStoreDisplayName} removed!`);//Notify user that store was removed successfully. Uses the display name of the store (whos state is set in the "storeSelect" function) as opposed to the normalized name of the store. 
             const updatedStoresArray = this.state.storesArray.filter( obj => obj.storeName !== this.state.selectedStore ); //Make a copy of the "storesArray" in state, rename it "updatedStoresArray", filters the"updatedStoresArray" (which at this point is what is currently in state) for all objects that do not have the "storeName" property as that is the same as what is in state as "selectedStore". This returns an array of objects that were not selected by the user.
             this.setState({storesArray: updatedStoresArray, selectedStore: ''}, () => {this.storeData(this.state.storesArray, 'storesArray')});//replace the current "storesArray" in state with the "updatedStoresArray" i.e. an array of all stores that were not selected AND reset the "selectedStore" state to an empty string. After that operation is completed, execute the callback function which stores the "storesArray" in state under the key 'storesArray'.
         }
