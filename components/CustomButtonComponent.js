@@ -24,7 +24,7 @@ const CustomButton = ({title, icon, onPressFunction, marginLeft}) => { //Receive
 const styles = StyleSheet.create({
     button: {
       padding: 10,
-      width: 175,
+      width: 160,
       backgroundColor: "yellowgreen",
     },
     title: {

@@ -24,7 +24,7 @@ function List( {itemArray, storesArray, checkBoxToggle, toggleOverlay} ) { //rec
     }
     //End <SectionList> array build
 
-    noItemMessage = ({section}) => { //This function is called as the footer to each section (which is the store name). Takes the entire object ('title' as a string and 'data' as an array of object) currently being iterated over by <SectionList>, names it 'section' and passes it into this function. 
+    const noItemMessage = ({section}) => { //This function is called as the footer to each section (which is the store name). Takes the entire object ('title' as a string and 'data' as an array of object) currently being iterated over by <SectionList>, names it 'section' and passes it into this function. 
       if(section.data.length == 0){ //if the 'data' array is empty, there are no items for the store, so return a message of <Text>.
         return  (
           <Animatable.View animation='slideInLeft' duration={1500}>
