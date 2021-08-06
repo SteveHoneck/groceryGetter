@@ -16,7 +16,8 @@ function StoreList( {storesArray, storeSelect} ) { //receives array of stores "s
             renderItem={renderItem} // Function to be called on each object in the "data" property
             keyExtractor={item => item.id} //
             ListEmptyComponent={<Text style={styles.listEmptyText}>No stores</Text>} //Displays when there are no stores in the "storesArray"
-            contentContainerStyle={styles.contentContainer} 
+            contentContainerStyle={styles.contentContainer}
+            keyboardShouldPersistTaps={'handled'} //Allows items in <FlatList> to be selected without dismissing the keyboard 
         />
     )
 }
