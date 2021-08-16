@@ -1,0 +1,1 @@
+export const baseUrl = 'http://192.168.1.104:3001/'; // This computers IPv4 Address followed by the port (3001) that the JSON server is set to run on. Can use 'baseUrl' constant wherever the server URL is needed in the code.

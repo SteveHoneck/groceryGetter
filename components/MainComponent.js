@@ -9,14 +9,25 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AddItemOverlay from './AddItemOverlayComponent';
 import AddStoreOverlay from './AddStoreOverlayComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { connect } from 'react-redux';
+import { fetchItems } from '../redux/ActionCreators'
 //Container component that will be parent to presentational components. Holds "itemArray", "storesArray", other state values, and functions that operate on the array/state and passes them to the various components
+
+const mapStateToProps = state => {
+    return {
+        itemArray: state.item.itemArray
+    };
+};
+
+const mapDispatchToProps = {
+    fetchItems
+};
 
 class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            itemArray: [], //Initial item array. Use DATA for pre-filled array, otherwise use []
+            //itemArray: [], //Initial item array. Use DATA for pre-filled array, otherwise use []
             storesArray: [],//Initial stores array. Use STORES for pre-filled array, otherwise use []          
             addItemOverlayVisible: false,
             addInput: '',//State for input from "addItem" overlay and "addStore" overlay. This same state can be used for both because they are never active at the same time
@@ -25,7 +36,11 @@ class Main extends Component {
             addStoreOverlayVisible: false, 
         };
         //this.removeFew(); //DEV CODE: enable this line and "removeFew" function to erase local storage
-        this.getData('itemArray', 'storesArray');  //Function to retrieve any data stored under the keys "itemArray" and "storesArray", called when the application is first constructed
+//        this.getData('itemArray', 'storesArray');  //Function to retrieve any data stored under the keys "itemArray" and "storesArray", called when the application is first constructed
+    }
+
+    componentDidMount() {
+        this.props.fetchItems();
     }
 
 /*
@@ -41,7 +56,7 @@ class Main extends Component {
         console.log('Local memory has been cleared.')
       }
 */
-
+/*
     //Function for persistent storage of data (data for this application is the array of item objects and array of store objects)
     storeData = async (array, key) => { //Name for function "storeData" can be called anything. Pass in two arguments named "array" (expected to be an array of item objects or store objects), and "key" (expected to be a string)
         try {
@@ -67,7 +82,7 @@ class Main extends Component {
             this.toast('Error loading data.');
         }
     }
-
+*/
     //Function "toast" to be called whenever a "ToastAndriod" notification is needed. ~~~!!!~~~ Would be nice to do as a functional component as opposed to a function here (just in order to avoid another function in "MainComponent"), but it's not immediately apparent how to make that work
     toast = (message) => { //Receives a string as an argument which is named "message"
         ToastAndroid.showWithGravityAndOffset( 
@@ -225,7 +240,7 @@ class Main extends Component {
                         </View>
                         
                         <View style={styles.wrapper}>
-                            <List itemArray={this.state.itemArray} storesArray={this.state.storesArray} checkBoxToggle={this.checkBoxToggle} toggleOverlay={this.toggleOverlay} /> 
+                            <List itemArray={this.props.itemArray} storesArray={this.state.storesArray} checkBoxToggle={this.checkBoxToggle} toggleOverlay={this.toggleOverlay} /> 
                         </View>
 
                         <View style={styles.footer}>
@@ -304,4 +319,4 @@ const styles = StyleSheet.create({
 
 
 
-export default Main;
+export default connect(mapStateToProps, mapDispatchToProps)(Main);
