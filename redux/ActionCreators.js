@@ -19,7 +19,7 @@ export const fetchItems = () => dispatch => { //Able to use an arrow function wr
             }
         )
         .then(response => response.json())
-        .then( itemArray => dispatch(loadItems(itemArray)) )
+        .then(itemArray => dispatch(loadItems(itemArray)))
         .catch(error => dispatch(itemsFailed(error.message)));
 };
 
