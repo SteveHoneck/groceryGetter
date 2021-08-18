@@ -13,9 +13,9 @@ import { connect } from 'react-redux';
 import { fetchItems } from '../redux/ActionCreators'
 //Container component that will be parent to presentational components. Holds "itemArray", "storesArray", other state values, and functions that operate on the array/state and passes them to the various components
 
-const mapStateToProps = state => {
+const mapStateToProps = state => { //'mapStateToProps' function takes the current state of the entire Redux store and adds the portion of it specified in the 'return' block to the 'props' for this component. An argument is automatically passed to the 'mapStateToProps' function by the 'connect' function ('connect' is a built in function from Redux) because the 'mapStateToProps' function is used as the first argument in the 'connect' function. The argument that is automatically passed is renamed 'state' here, but it could be renamed anything.
     return {
-        itemArray: state.item.itemArray
+        itemArray: state.item.itemArray //Assign the key "props.itemArray" to the value "state.item.itemArray". 'state' is the current state of the entire Redux store, '.item' is the object in the state under they key 'item' (state key/value object 'item' is created in the 'itemReducer' file as "const item = (state = {itemArray: [], errMess: null})", therefore, 'item' is an object containing 'itemArray' and 'errMess') 
     };
 };
 
@@ -319,4 +319,4 @@ const styles = StyleSheet.create({
 
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Main);
+export default connect(mapStateToProps, mapDispatchToProps)(Main); //'connect' is a function from React-Redux. It allows the Main component to take its state from the Redux store. Having 'mapStateToProps' as the first argument ('mapStateToProps' is a custom function and could be named anything) results in the current state of the entire Redux store being passed to 'mapStateToProps' as an argument. 'mapStateToProps' is a function that provides a portion of the current state of the Redux store to "Main" component as part of the 'props' object. "mapDispatchToProps" was added as the second argument in order to make the "addComment" action creator function available inside the MainComponent as a prop.
