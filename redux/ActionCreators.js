@@ -4,16 +4,16 @@ import { baseUrl } from '../shared/baseUrl';
 export const fetchItems = () => dispatch => { //Able to use an arrow function wrapped in an arrow function due to enabling Redux Thunk. This allows the "dispatch" method to be passed to the inner function. 'dispatch' is a built in method from the Redux Store, since 'thunk' is activated in the 'createStore' function via 'applyMiddleware' argument, it gains access to the 'dispatch' method and allows it to be passed here via an arrow function wrapped in an arrow function .
 
     return fetch(baseUrl + 'itemArray') //'fetch' returns a promise that resolves to a 'response' object
-            .then(response => { 
+            .then(response => {//First callback method for the '.then' method, handles a resolved promise from 'fetch'
                 if (response.ok) { //Response object returned by 'fetch' contains multiple things. One is an 'ok' property which is shorthand for checking that status is in the range 200-299 (something was successfully returned)
                     return response;
                 } else { // Enter block if the server sends a response, but the response is not in the okay HTTP response code range. This block throws an error to the ".catch" method at the end of the promise chain. 
-                    const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                    const error = new Error(`Error ${response.status}: ${response.statusText}`); //'.status' and '.statusText' are properties of the response object returned by fetch.
                     error.response = response;
                     throw error;
                 }
             },
-            error => {
+            error => {// Second callback function can be added to '.then' method to handle a rejected promise from 'fetch'. Enter block if the server does not send a response (promise from 'fetch' is rejected). This block throws an error to the ".catch" method at the end of the promise chain.
                 const errMess = new Error(error.message);
                 throw errMess;
             }
