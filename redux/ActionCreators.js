@@ -35,5 +35,14 @@ export const itemsFailed = errMess => ({ //Action for if fetching the 'itemArray
 
 export const addItemSubmit = (item, storeName) => ({ //Action for when user touches the 'add' button in the 'addItem' <Overlay>. This action creator is called from <Main> component and is passed the 'storeName' and 'item' properties from the <Main> component local state as arguments.
     type: ActionTypes.ADD_ITEM,
-    payload: {/*Item object*/}
+    payload: { //The 'payload' for this action will be a complete item object that will be added to the "itemArray" via the reducer
+        id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. Can not do this in the 'itemReducer.js' file because reducers are pure functions, not proper to have "random number" code in a reducer.
+        storeName: storeName, //Set the "storeName" value of the item being added as what is currently in the "selectedStore" state (which is the normalized store name). 'selectedStore' state is sent from "MainComponent" in the 'addItemSubmit' call as the 2nd argument and renamed 'storeName' in the argument list above. This state is set in the "storeSelect" function in "MainComponent". Items are added with the normalized store name for the following scenario: A store is added "aLdi" (normalized store name of "aldi"), all items are added to that store with "storeName" property of "aldi", store "aLdi" is deleted, store is re-added as "Aldi" (normalized store name of "aldi"), all Items are correctly added to this store because both "aLdi" and "Aldi" have the same normalized store name.
+        item: item, //Set the "item" value of the item being added as what is currently in the "addInput" state. 'addInput' state is sent from "MainComponent" in the 'addItemSubmit' call as the 1st argument and renamed 'item' in the argument list above.
+        isChecked: false,
+        textStyle: { //Create a "style" object and default styles that will be used by <CheckBox> to style the text after the check box. 
+            textDecorationLine: 'none',
+            color: 'black'
+        } 
+    }
 });

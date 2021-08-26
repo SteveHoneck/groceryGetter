@@ -10,7 +10,7 @@ import AddItemOverlay from './AddItemOverlayComponent';
 import AddStoreOverlay from './AddStoreOverlayComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { connect } from 'react-redux';
-import { fetchItems } from '../redux/ActionCreators'
+import { addItemSubmit, fetchItems } from '../redux/ActionCreators'
 //Container component that will be parent to presentational components. Holds "itemArray", "storesArray", other state values, and functions that operate on the array/state and passes them to the various components
 
 const mapStateToProps = state => { //'mapStateToProps' function takes the current state of the entire Redux store and adds the portion of it specified in the 'return' block to the 'props' for this component. An argument is automatically passed to the 'mapStateToProps' function by the 'connect' function ('connect' is a built in function from Redux) because the 'mapStateToProps' function is used as the first argument in the 'connect' function. The argument that is automatically passed is renamed 'state' here, but it could be renamed anything.
@@ -19,8 +19,9 @@ const mapStateToProps = state => { //'mapStateToProps' function takes the curren
     };
 };
 
-const mapDispatchToProps = {
-    fetchItems
+const mapDispatchToProps = { //Action creators to be dispatched are imported from "ActionCreators.js" and mapped to the props object via this function
+    fetchItems,
+    addItemSubmit
 };
 
 class Main extends Component {
@@ -159,8 +160,12 @@ class Main extends Component {
     }
 
     //Function "addItemSubmit" to submit info from "addItem" <Overlay>  (make arrow function so don't have to bind)
-    addItemSubmit(/*this.state.addInput, this.state.selectedStore*/);
-
+    addItemSubmit = () => {
+        this.props.addItemSubmit(this.state.addInput, this.state.selectedStore);
+        this.setState({addInput: ''})//Resets the text in state that is displayed in the <TextInput> and used to add an item/store. This line could be moved to the 'itemReducer.js' file if 'addInput' was moved to the Redux store as opposed to local state.
+    }
+    //Assign the 'addItemSubmit' function from 'ActionCreators.js' to a function also called 'addItemSubmit' so that it in turn can be passed to the <Overlay> components. The 'addItemSubmit' function from "ActionCreators.js" is made available as a prop via the 'mapDispatchToProps' / 'connect' functions and is passed the 'addInput' and 'selectedStore' local state values as arguments. Alternate solution: call 'addItemSubmit' that is in props directly in-line in the <Overlay> component via " addItemSubmit={this.props.addItemSubmit(this.state.addInput, this.state.selectedStore)} " (did not use this method because 'addItemSubmit' is called twice, so that line would be repeated, not DRY). Alternate solution: suscribe the <Overlay> component to the store so 'addItemSubmit' can be called directly from within the <Overlay> component, would also need to pass 'this.state.addInput' & 'this.state.selectedStore' to the <Overlay> component so 'addItemSubmit' can use them as arguments, or add 'this.state.addInput' & 'this.state.selectedStore' to the redux store.
+    /*
     addItemSubmit = () => {       
         let updatedItemArray = this.state.itemArray; //Initialize "updatedItemArray" as the item array currently in state so that it can be changed without mutating the array in state 
 
@@ -185,7 +190,7 @@ class Main extends Component {
             this.setState({addInput: '', itemArray: updatedItemArray}, () => {this.storeData(this.state.itemArray, 'itemArray')})//Resets the text in state that is displayed in the <TextInput> and used to add an item/store, replace the current "itemArray" in state with the "updatedItemArray" i.e. an array with the additional item object. After that operation is completed, execute the callback function which stores the "itemArray" in state under the key 'itemArray'.
         }
     } 
-
+*/
     //Function "addStoreSubmit" to submit info from "addStore" <Overlay>  (make arrow function so don't have to bind)
     addStoreSubmit = () => { //Function with two "if" statements. Outer "if" statement checks that there is ANY user input. Inner "if" statement checks if the store has already been added.
         let updatedStoresArray = this.state.storesArray; //Initialize "updatedStoresArray" as the stores array currently in state so that it can be changed without mutating the array in state 
@@ -321,4 +326,4 @@ const styles = StyleSheet.create({
 
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Main); //'connect' is a function from React-Redux. It allows the Main component to take its state from the Redux store. Having 'mapStateToProps' as the first argument ('mapStateToProps' is a custom function and could be named anything) results in the current state of the entire Redux store being passed to 'mapStateToProps' as an argument. 'mapStateToProps' is a function that provides a portion of the current state of the Redux store to "Main" component as part of the 'props' object. "mapDispatchToProps" was added as the second argument in order to make the "addComment" action creator function available inside the MainComponent as a prop.
+export default connect(mapStateToProps, mapDispatchToProps)(Main); //'connect' is a function from React-Redux. It allows the Main component to take its state from the Redux store. Having 'mapStateToProps' as the first argument ('mapStateToProps' is a custom function and could be named anything) results in the current state of the entire Redux store being passed to 'mapStateToProps' as an argument. 'mapStateToProps' is a function that provides a portion of the current state of the Redux store to "Main" component as part of the 'props' object. "mapDispatchToProps" was added as the second argument in order to make the "addItemSubmit" & "fetchItems" action creator functions available inside the MainComponent as a prop.
