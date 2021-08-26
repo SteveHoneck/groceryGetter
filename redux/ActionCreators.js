@@ -23,12 +23,17 @@ export const fetchItems = () => dispatch => { //Able to use an arrow function wr
         .catch(error => dispatch(itemsFailed(error.message))); //Catches all and any errors thrown by the promise chain and passes the ".message" property of the error object to the "itemsFailed" function
 };
 
-export const loadItems = itemArray => ({
+export const loadItems = itemArray => ({ //Action for taking the fetched 'itemArray' from the server and sending the 'itemArray' to the 'itemReducer.js' file
     type: ActionTypes.LOAD_ITEMS,
-    payload: itemArray
+    payload: itemArray //'loadItems' is called in 'fetch' / '.then' chain and that call takes the fetched 'itemArray', names it 'itemArray' and passes as an argument to 'loadItems'. Here, 'loadItems' receives the fetched 'itemArray' as an argument, renames it 'itemArray' and packages it as the value to the key 'payload' 
 });
 
-export const itemsFailed = errMess => ({
+export const itemsFailed = errMess => ({ //Action for if fetching the 'itemArray' from the server fails or returns something not in the http success range
     type: ActionTypes.ITEMS_FAILED,
-    payload: errMess
+    payload: errMess //'itemsFailed' is called in 'fetch' / '.then' chain and that call takes any error returned by the promise chain, names it 'error' and passes the '.message' property of that 'error' as an argument to 'itemsFailed'. Here, 'itemsFailed' receives the 'error.message' as an argument, renames it 'errMess' and packages it as the value to the key 'payload' 
+});
+
+export const addItemSubmit = (item, storeName) => ({ //Action for when user touches the 'add' button in the 'addItem' <Overlay>. This action creator is called from <Main> component and is passed the 'storeName' and 'item' properties from the <Main> component local state as arguments.
+    type: ActionTypes.ADD_ITEM,
+    payload: {/*Item object*/}
 });

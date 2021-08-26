@@ -159,6 +159,8 @@ class Main extends Component {
     }
 
     //Function "addItemSubmit" to submit info from "addItem" <Overlay>  (make arrow function so don't have to bind)
+    addItemSubmit(/*this.state.addInput, this.state.selectedStore*/);
+
     addItemSubmit = () => {       
         let updatedItemArray = this.state.itemArray; //Initialize "updatedItemArray" as the item array currently in state so that it can be changed without mutating the array in state 
 
