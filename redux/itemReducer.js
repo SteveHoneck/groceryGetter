@@ -28,6 +28,7 @@ export const item = (state = {itemArray: [], errMess: null}, action) => {//Reduc
         case ActionTypes.ADD_ITEM: //Action of updating the 'itemArray' object of the 'item' portion of the Redux state after the user presses the button to submit a new item.
             const item = action.payload; //Assign the payload from the action creator (the payload is a complete item object) to the variable 'item' for ease of access / less typing below.
             
+            //Remove logic checks, will be in action creator, 
             if ((item.item === '') || (item.item ===' ')) { //A blank item will not be added. Enter statement if the item object created by the action creator has an empty string OR a spacebar keystroke (so an 'empty' item is not added) in the 'item' value. "addInput" from "MainComponent" local state is what sets the 'item.item' value and is initially an empty string and reset to an empty string after an item is submitted.
                 toast('Please enter an item!'); //Notify user that item was not added
                 return state //Don't add item object, just return the previous state
