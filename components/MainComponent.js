@@ -160,11 +160,18 @@ class Main extends Component {
     }
 
     //Function "addItemSubmit" to submit info from "addItem" <Overlay>  (make arrow function so don't have to bind)
+    //Call the 'addItemSubmit' function from 'ActionCreators.js' (available in props) from within a function also called 'addItemSubmit' so that it in turn can be passed to the <Overlay> components. The 'addItemSubmit' function from "ActionCreators.js" is made available as a prop via the 'mapDispatchToProps' / 'connect' functions and is passed the 'addInput' and 'selectedStore' local state values as arguments. Alternate solution: call 'addItemSubmit' that is in props directly in-line in the <Overlay> component via " addItemSubmit={this.props.addItemSubmit(this.state.addInput, this.state.selectedStore)} " (did not use this method because 'addItemSubmit' is called twice & 'if' checks are needed, so that line would be repeated, not DRY). Alternate solution: suscribe the <Overlay> component to the store so 'addItemSubmit' can be called directly from within the <Overlay> component, would also need to pass 'this.state.addInput' & 'this.state.selectedStore' to the <Overlay> component so 'addItemSubmit' can use them as arguments, or add 'this.state.addInput' & 'this.state.selectedStore' to the redux store.
     addItemSubmit = () => {
-        this.props.addItemSubmit(this.state.addInput, this.state.selectedStore);
-        this.setState({addInput: ''})//Resets the text in state that is displayed in the <TextInput> and used to add an item/store. This line could be moved to the 'itemReducer.js' file if 'addInput' was moved to the Redux store as opposed to local state.
+        if ((this.state.addInput === '') || (this.state.addInput ===' ')) { //A blank item will not be added. Enter statement if there is nothing in the "addInput" state which is denoted by an empty string OR a spacebar keystroke (so an 'empty' item is not added). "addInput" is initially an empty string and reset to an empty string after an item is submitted.
+            this.toast('Please enter an item!'); //Notify user that item was not added
+        } else if (this.state.selectedStore === '') { //An item without a store will not be added. Enter statement if there is nothing in the "selectedStore" state, which is denoted by an empty string. "selectedStore" is initially an empty string.
+            this.toast('Please select a store!');//Notify user that a store was not selected
+        } else {//if there is both text in "addInput" and text in "selectedStore", this will be entered and the 'addItemSubmit' Action Creator will be called & the item will be submitted
+            this.props.addItemSubmit(this.state.addInput, this.state.selectedStore);
+            this.setState({addInput: ''})//Resets the text in state that is displayed in the <TextInput> and used to add an item/store. This line could be moved to the 'itemReducer.js' file if 'addInput' was moved to the Redux store as opposed to local state.
+        }
     }
-    //Assign the 'addItemSubmit' function from 'ActionCreators.js' to a function also called 'addItemSubmit' so that it in turn can be passed to the <Overlay> components. The 'addItemSubmit' function from "ActionCreators.js" is made available as a prop via the 'mapDispatchToProps' / 'connect' functions and is passed the 'addInput' and 'selectedStore' local state values as arguments. Alternate solution: call 'addItemSubmit' that is in props directly in-line in the <Overlay> component via " addItemSubmit={this.props.addItemSubmit(this.state.addInput, this.state.selectedStore)} " (did not use this method because 'addItemSubmit' is called twice, so that line would be repeated, not DRY). Alternate solution: suscribe the <Overlay> component to the store so 'addItemSubmit' can be called directly from within the <Overlay> component, would also need to pass 'this.state.addInput' & 'this.state.selectedStore' to the <Overlay> component so 'addItemSubmit' can use them as arguments, or add 'this.state.addInput' & 'this.state.selectedStore' to the redux store.
+
     /*
     addItemSubmit = () => {       
         let updatedItemArray = this.state.itemArray; //Initialize "updatedItemArray" as the item array currently in state so that it can be changed without mutating the array in state 

@@ -36,23 +36,45 @@ export const itemsFailed = errMess => ({ //Action for if fetching the 'itemArray
 
 //Function for Posting new item to server
 export const addItemSubmit = (item, storeName) => dispatch => { //Action for when user touches the 'add' button in the <AddItemOverlay>. This action creator is called from <Main> component and is passed the 'storeName' and 'item' properties from the <Main> component local state as arguments. It will post the new item to the server and dispatch an action to update the Redux store
-    //Logic checks for item name present and if a store is selected, will need to add "toast" function here or import as its own function
+
     const newItem = { //Create a new item object called "newItem" that will be posted to the "itemArray" in the server
         id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. Can not do this in the 'itemReducer.js' file because reducers are pure functions, not proper to have "random number" code in a reducer.
-        storeName: storeName, //Set the "storeName" value of the item being added as what is currently in the "selectedStore" state (which is the normalized store name). 'selectedStore' state is sent from "MainComponent" in the 'addItemSubmit' call as the 2nd argument and renamed 'storeName' in the argument list above. This state is set in the "storeSelect" function in "MainComponent". Items are added with the normalized store name for the following scenario: A store is added "aLdi" (normalized store name of "aldi"), all items are added to that store with "storeName" property of "aldi", store "aLdi" is deleted, store is re-added as "Aldi" (normalized store name of "aldi"), all Items are correctly added to this store because both "aLdi" and "Aldi" have the same normalized store name.
-        item: item, //Set the "item" value of the item being added as what is currently in the "addInput" state. 'addInput' state is sent from "MainComponent" in the 'addItemSubmit' call as the 1st argument and renamed 'item' in the argument list above.
+        storeName: storeName, //Set the "storeName" value of the item being added as what is currently in the "selectedStore" state (which is the normalized store name). 'selectedStore' state is sent from "MainComponent" in the 'addItemSubmit' call as the 2nd argument and renamed 'storeName' in the argument list above. This state is set in the "storeSelect" function in "MainComponent". Items are added with the normalized store name for the following scenario: A store is added "aLdi" (normalized store name of "aldi"), all items are added to that store with "storeName" property of "aldi", store "aLdi" is deleted, store is re-added as "Aldi" (normalized store name of "aldi"), all Items are correctly added to this store because both "aLdi" and "Aldi" have the same normalized store name. Could use ES6 syntax of "storeName" instead of "storeName: storeName"
+        item: item, //Set the "item" value of the item being added as what is currently in the "addInput" state. 'addInput' state is sent from "MainComponent" in the 'addItemSubmit' call as the 1st argument and renamed 'item' in the argument list above. Could use ES6 syntax of "item" instead of "item: item"
         isChecked: false,
         textStyle: { //Create a "style" object and default styles that will be used by <CheckBox> to style the text after the check box. 
             textDecorationLine: 'none',
             color: 'black'
         }
     };
-    // return fetch with post method
-    // error handling for response from server
-    // change response to JSON
-    // dispatch addItem with JSON response as argument
-    //final error catch
 
+    return fetch(baseUrl + 'itemArray', { //'fetch' returns a promise that resolves to a 'response' object. First argument passed is the URL to access, second argument is an object to specify the "fetch" call as a "POST" request as opposed to a "GET" request and appropriate associated settings needed for a post request.
+        method: "POST",
+        body: JSON.stringify(newItem),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+        .then(response => { //See notes from error handling in "fetchItems" Action Creator
+                if (response.ok) {
+                    return response
+                } else {
+                    const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                    error.response = response;
+                    throw error;
+                }
+            },
+            error => {
+                const errMess = new Error(error.message);
+                throw errMess;
+            }
+        )
+        .then(response => response.json()) //When a post request is successful, json server will send back the data that was sent in JSON format & will insert a unique ID along with it. Convert the response back to JavaScript with this ".json" method & dispatch it with the line below.
+        .then(response => dispatch(addItem(response))) //Updates the redux store with the response created in the line above (an item object in JavaScript format)
+        .catch(error => { //Catches any rejected promises or error "throw" 
+            console.log('post item', error.message);
+            alert('Your item could not be posted\nError: ' + error.message);
+        });
 };
 
 //Function for adding new item to Redux store after successful server post from "addItemSubmit" action creator
