@@ -10,7 +10,7 @@ import AddItemOverlay from './AddItemOverlayComponent';
 import AddStoreOverlay from './AddStoreOverlayComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { connect } from 'react-redux';
-import { addItemSubmit, fetchItems } from '../redux/ActionCreators'
+import { addItemSubmit, fetchItems, fetchStores } from '../redux/ActionCreators'
 //Container component that will be parent to presentational components. Holds "itemArray", "storesArray", other state values, and functions that operate on the array/state and passes them to the various components
 
 const mapStateToProps = state => { //'mapStateToProps' function takes the current state of the entire Redux store and adds the portion of it specified in the 'return' block to the 'props' for this component. An argument is automatically passed to the 'mapStateToProps' function by the 'connect' function ('connect' is a built in function from Redux) because the 'mapStateToProps' function is used as the first argument in the 'connect' function. The argument that is automatically passed is renamed 'state' here, but it could be renamed anything.
@@ -21,7 +21,8 @@ const mapStateToProps = state => { //'mapStateToProps' function takes the curren
 
 const mapDispatchToProps = { //Action creators to be dispatched are imported from "ActionCreators.js" and mapped to the props object via this function
     fetchItems,
-    addItemSubmit
+    addItemSubmit,
+    fetchStores
 };
 
 class Main extends Component {
@@ -42,6 +43,7 @@ class Main extends Component {
 
     componentDidMount() {
         this.props.fetchItems();
+        this.props.fetchStores();
     }
 
 /*
