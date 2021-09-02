@@ -139,6 +139,6 @@ export const addStoreSubmit = storeDisplayName => dispatch => { //Action for whe
 
 //Function for adding new store to Redux store after successful server post from "addStoreSubmit" action creator
 export const addStore = store => ({ //Server's response (which is the store object) is passed as the argument and renamed 'store'
-type: ActionTypes.ADD_STORE,
-payload: store //The 'payload' for this action will be a complete store object sent back from the server response that will be added to the "storesArray" via the reducer
+    type: ActionTypes.ADD_STORE,
+    payload: store //The 'payload' for this action will be a complete store object sent back from the server response that will be added to the "storesArray" via the reducer
 });

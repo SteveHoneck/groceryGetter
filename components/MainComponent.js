@@ -15,7 +15,8 @@ import { addItemSubmit, fetchItems, fetchStores } from '../redux/ActionCreators'
 
 const mapStateToProps = state => { //'mapStateToProps' function takes the current state of the entire Redux store and adds the portion of it specified in the 'return' block to the 'props' for this component. An argument is automatically passed to the 'mapStateToProps' function by the 'connect' function ('connect' is a built in function from Redux) because the 'mapStateToProps' function is used as the first argument in the 'connect' function. The argument that is automatically passed is renamed 'state' here, but it could be renamed anything.
     return {
-        itemArray: state.item.itemArray //Assign the key "props.itemArray" to the value "state.item.itemArray". 'state' is the current state of the entire Redux store, '.item' is the object in the state under they key 'item' (state key/value object 'item' is created in the 'itemReducer' file as "const item = (state = {itemArray: [], errMess: null})", therefore, 'item' is an object containing 'itemArray' and 'errMess') 
+        itemArray: state.item.itemArray, //Assign the key "props.itemArray" to the value "state.item.itemArray". 'state' is the current state of the entire Redux store, '.item' is the object in the state under they key 'item' (state key/value object 'item' is created in the 'itemReducer' file as "const item = (state = {itemArray: [], errMess: null})", therefore, 'item' is an object containing 'itemArray' and 'errMess') 
+        storesArray: state.stores.storesArray //Assign the key "props.storesArray" to the value "state.stores.storesArray". 'state' is the current state of the entire Redux store, '.stores' is the object in the state under they key 'stores' (state key/value object 'stores' is created in the 'storesReducer' file as "const stores = (state = {storesArray: [], errMess: null})", therefore, 'stores' is an object containing 'storesArray' and 'errMess') 
     };
 };
 
@@ -29,8 +30,8 @@ class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            //itemArray: [], //Initial item array. Use DATA for pre-filled array, otherwise use []
-            storesArray: [],//Initial stores array. Use STORES for pre-filled array, otherwise use []          
+            //itemArray: [], //Initial item array. Use DATA for pre-filled array, otherwise use []. OR comment out line when using Redux.
+            //storesArray: [],//Initial stores array. Use STORES for pre-filled array, otherwise use []. OR comment out line when using Redux.          
             addItemOverlayVisible: false,
             addInput: '',//State for input from "addItem" overlay and "addStore" overlay. This same state can be used for both because they are never active at the same time
             selectedStore: '', //State for holding the normalized text string of storeName selected in "addItem" <Overlay>
@@ -41,9 +42,9 @@ class Main extends Component {
 //        this.getData('itemArray', 'storesArray');  //Function to retrieve any data stored under the keys "itemArray" and "storesArray", called when the application is first constructed
     }
 
-    componentDidMount() {
-        this.props.fetchItems();
-        this.props.fetchStores();
+    componentDidMount() { //Functions to run when <Main> component is first mounted. 
+        this.props.fetchItems(); //Action Creator 'fetchItems' is available to this component via 'import'. 'fetchItems' is made available as a prop to this component via 'mapDispatchToProps' function. When <Main> is mounted, 'itemArray' will be fetched from the server.
+        this.props.fetchStores(); //Action Creator 'fetchStores' is available to this component via 'import'. 'fetchStores' is made available as a prop to this component via 'mapDispatchToProps' function. When <Main> is mounted, 'storesArray' will be fetched from the server.
     }
 
 /*
@@ -256,7 +257,7 @@ class Main extends Component {
                         </View>
                         
                         <View style={styles.wrapper}>
-                            <List itemArray={this.props.itemArray} storesArray={this.state.storesArray} checkBoxToggle={this.checkBoxToggle} toggleOverlay={this.toggleOverlay} /> 
+                            <List itemArray={this.props.itemArray} storesArray={this.props.storesArray} checkBoxToggle={this.checkBoxToggle} toggleOverlay={this.toggleOverlay} /> 
                         </View>
 
                         <View style={styles.footer}>
@@ -270,7 +271,7 @@ class Main extends Component {
                                 placeholder={'Add item'} 
                                 onChangeText={text => this.setState({addInput: text})} 
                                 value={this.state.addInput} 
-                                storesArray={this.state.storesArray} 
+                                storesArray={this.props.storesArray} 
                                 storeSelect={this.storeSelect} 
                                 addItemSubmit={this.addItemSubmit} /*All state values and all functions that are needed by the <AddItemOverlay> are passed*/ 
                             />
@@ -283,7 +284,7 @@ class Main extends Component {
                                 placeholder={'Add store'}
                                 onChangeText={text => this.setState({addInput: text})}
                                 value={this.state.addInput}
-                                storesArray={this.state.storesArray} 
+                                storesArray={this.props.storesArray} 
                                 storeSelect={this.storeSelect}
                                 addStoreSubmit={this.addStoreSubmit}
                                 removeStore={this.removeStore} /*All state values and all functions that are needed by the <AddItemOverlay> are passed*/    
