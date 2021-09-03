@@ -10,7 +10,7 @@ import AddItemOverlay from './AddItemOverlayComponent';
 import AddStoreOverlay from './AddStoreOverlayComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { connect } from 'react-redux';
-import { addItemSubmit, fetchItems, fetchStores } from '../redux/ActionCreators'
+import { addItemSubmit, addStoreSubmit, fetchItems, fetchStores } from '../redux/ActionCreators'
 //Container component that will be parent to presentational components. Holds "itemArray", "storesArray", other state values, and functions that operate on the array/state and passes them to the various components
 
 const mapStateToProps = state => { //'mapStateToProps' function takes the current state of the entire Redux store and adds the portion of it specified in the 'return' block to the 'props' for this component. An argument is automatically passed to the 'mapStateToProps' function by the 'connect' function ('connect' is a built in function from Redux) because the 'mapStateToProps' function is used as the first argument in the 'connect' function. The argument that is automatically passed is renamed 'state' here, but it could be renamed anything.
@@ -23,7 +23,8 @@ const mapStateToProps = state => { //'mapStateToProps' function takes the curren
 const mapDispatchToProps = { //Action creators to be dispatched are imported from "ActionCreators.js" and mapped to the props object via this function
     fetchItems,
     addItemSubmit,
-    fetchStores
+    fetchStores,
+    addStoreSubmit
 };
 
 class Main extends Component {
@@ -163,7 +164,7 @@ class Main extends Component {
     }
 
     //Function "addItemSubmit" to submit info from "addItem" <Overlay>  (make arrow function so don't have to bind)
-    //Call the 'addItemSubmit' function from 'ActionCreators.js' (available in props) from within a function also called 'addItemSubmit' so that it in turn can be passed to the <Overlay> components. The 'addItemSubmit' function from "ActionCreators.js" is made available as a prop via the 'mapDispatchToProps' / 'connect' functions and is passed the 'addInput' and 'selectedStore' local state values as arguments. Alternate solution: call 'addItemSubmit' that is in props directly in-line in the <Overlay> component via " addItemSubmit={this.props.addItemSubmit(this.state.addInput, this.state.selectedStore)} " (did not use this method because 'addItemSubmit' is called twice & 'if' checks are needed, so that line would be repeated, not DRY). Alternate solution: suscribe the <Overlay> component to the store so 'addItemSubmit' can be called directly from within the <Overlay> component, would also need to pass 'this.state.addInput' & 'this.state.selectedStore' to the <Overlay> component so 'addItemSubmit' can use them as arguments, or add 'this.state.addInput' & 'this.state.selectedStore' to the redux store.
+    //Call the 'addItemSubmit' function from 'ActionCreators.js' (available in props) from within a function also called 'addItemSubmit' so that it in turn can be passed to the <Overlay> components. The 'addItemSubmit' function from "ActionCreators.js" is made available as a prop via the 'mapDispatchToProps' / 'connect' functions and is passed the 'addInput' and 'selectedStore' local state values as arguments. Alternate solution: call 'addItemSubmit' that is in props directly in-line in the <Overlay> component via " addItemSubmit={this.props.addItemSubmit(this.state.addInput, this.state.selectedStore)} " (did not use this method because 'addItemSubmit' is called twice (once for each <Overlay>) & 'if' checks are needed which would be messy in-line, so that line would be repeated, not DRY). Alternate solution: suscribe the <Overlay> component to the store so 'addItemSubmit' can be called directly from within the <Overlay> component, would also need to pass 'this.state.addInput' & 'this.state.selectedStore' to the <Overlay> component so 'addItemSubmit' can use them as arguments, or add 'this.state.addInput' & 'this.state.selectedStore' to the redux store.
     addItemSubmit = () => {
         if ((this.state.addInput === '') || (this.state.addInput ===' ')) { //A blank item will not be added. Enter statement if there is nothing in the "addInput" state which is denoted by an empty string OR a spacebar keystroke (so an 'empty' item is not added). "addInput" is initially an empty string and reset to an empty string after an item is submitted.
             this.toast('Please enter an item!'); //Notify user that item was not added
@@ -202,6 +203,30 @@ class Main extends Component {
     } 
 */
     //Function "addStoreSubmit" to submit info from "addStore" <Overlay>  (make arrow function so don't have to bind)
+    //Call the 'addStoreSubmit' function from 'ActionCreators.js' (available in props) from within a function also called 'addStoreSubmit' so that it in turn can be passed to the <Overlay> components. The 'addStoreSubmit' function from "ActionCreators.js" is made available as a prop via the 'mapDispatchToProps' / 'connect' functions and is passed the 'addInput' local state value as argument. Alternate solution: call 'addStoreSubmit' that is in props directly in-line in the <Overlay> component via " addStoreSubmit={this.props.addStoreSubmit(this.state.addInput)} " (did not use this method because 'addStoreSubmit' is called twice (once for each <Overlay>) & 'if' checks are needed which would be messy in-line, so that line would be repeated, not DRY). Alternate solution: suscribe the <Overlay> component to the store so 'addStoreSubmit' can be called directly from within the <Overlay> component, would also need to pass 'this.state.addInput' to the <Overlay> component so 'addStoreSubmit' can use it as argument, or add 'this.state.addInput' to the redux store.
+    addStoreSubmit = () => {
+        if (this.state.addInput) { //Outer "if" statement. If the user has not entered any text, "addInput" will be an empty string which is FALSY and the outer "if" statement will not be entered (a blank item will not be added)
+            
+            let storeName = this.state.addInput.toLowerCase().replace(/\s+/g, '') //Normalized store name: variable "storeName" is created which takes what the user input as the store's name, sets it all to lowercase and removes all whitespace (+ will remove chunks of whitespace at a time, with no +, each space has to be replaced individually)
+
+            let storeCheckArray = this.props.storesArray.filter( storeObject => {//This line creates a new array "storeCheckArray" to check if the store to be added is already in the "storesArray" in state. "filter" the "storesArray" in the Redux store (which is available as props) by passing each object in renamed as "storeObject" 
+                return storeObject.storeName === storeName; //Check if the normalized "storeName" of the "storeObject" being iterated over is equal to the normalized store name being added. "storeCheckArray" will be an array of length 0 if there is no match.
+            })
+
+            if ( (storeCheckArray.length) === 0 ) { //Inner "if" statement. If there is nothing in "storeCheckArray", it will have length of 0 meaning no matches, so enter "if" statment and call the Action Creator to add the store to the "storesArray" in the Redux store
+                this.props.addStoreSubmit(this.state.addInput, storeName) //Call the 'addStoreSubmit' Action Creator that is in props and pass 2 arguments: the store name string AS ENTERED by the user (argument will be renamed 'storeDisplayName' in 'addStoreSubmit' action creator argument list), and the 'storeName' created above (argument will be also named 'storeName' in 'addStoreSubmit' action creator argument list)
+                this.setState({addInput: ''})//Resets the text in state that is displayed in the <TextInput> and used to add a store/item.
+            } else { //If there is something in the "storeCheckArray", "else" statement will be entered
+                this.toast(`${this.state.addInput} already exists!`);//Notify user that store has already been added
+            }
+
+        } else { //Outer "if" statement. If no store was added, notify user to add text to the input field.
+            this.toast('Please enter a store!');//Notify user that store was not added
+        }
+    }
+
+
+   /* 
     addStoreSubmit = () => { //Function with two "if" statements. Outer "if" statement checks that there is ANY user input. Inner "if" statement checks if the store has already been added.
         let updatedStoresArray = this.state.storesArray; //Initialize "updatedStoresArray" as the stores array currently in state so that it can be changed without mutating the array in state 
 
@@ -233,6 +258,7 @@ class Main extends Component {
             this.toast('Please enter a store!');//Notify user that store was not added
         }
     }
+    */
 
     //Function "removeStore" to remove stores from the stores list from the add/remove stores overlay
     removeStore = () => { //can't pass value "id" of store object selected as in "storeSelect" function because "storeSelect" gets its arguments from the "StoreListItemComponent" "onPress" attribute which can only run 1 function / don't want to run "removeStore" when "onPress" is activated in "StoreListItemComponent".

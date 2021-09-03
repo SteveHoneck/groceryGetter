@@ -118,10 +118,8 @@ export const storesFailed = errMess => ({ //Action for if fetching the 'storesAr
 });
 
 //Function for Posting new store to server / checking if store is already in array on server
-export const addStoreSubmit = storeDisplayName => dispatch => { //Action for when user touches the 'add' button in the <AddStoreOverlay>. This action creator is called from <Main> component and is passed the 'storeDisplayName'property from the <Main> component local state as an argument. It will post the new store to the server and dispatch an action to update the Redux store
-    
-    //Logic checks for if the store already exists or if nothing was typed in for a store name, will need to add "toast" function here or import as its own function. Also create the normalized 'storeName'.
-    
+export const addStoreSubmit = (storeDisplayName, storeName) => dispatch => { //Action for when user touches the 'add' button in the <AddStoreOverlay>. This action creator is called from <Main> component and is passed the 'addInput' property from the <Main> component local state as 1st argument and the normailzed store name as the 2nd argument. It will post the new store to the server and dispatch an action to update the Redux store
+       
     const newStore = { //Create a new store object called "newStore" that will be posted to the "storesArray" in the server
         id: Date.now(), //Assign an always unique "id" which will be current milliseconds since UNIX epoch. 
         storeDisplayName: storeDisplayName,//String AS ENTERED by user. Used for the store name displayed in the <StoreList>. Could submit "value" from text <Input> field since it is also defined as the state of "addInput", not sure which method is better. 
