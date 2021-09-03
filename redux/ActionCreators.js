@@ -128,15 +128,43 @@ export const addStoreSubmit = (storeDisplayName, storeName) => dispatch => { //A
         color: 'black' //Default style to make the store appear un-selected when rendered in <StoreList>
     };
     
-    // return fetch with post method
-    // error handling for response from server
-    // change response to JSON
-    // dispatch addItem with JSON response as argument
-    //final error catch
+    return fetch(baseUrl + 'storesArray', { //'fetch' returns a promise that resolves to a 'response' object. First argument passed is the URL to access, second argument is an object to specify the "fetch" call as a "POST" request as opposed to a "GET" request and appropriate associated settings needed for a post request.
+        method: "POST",
+        body: JSON.stringify(newStore),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+        .then(response => { //See notes from error handling in "fetchItems" Action Creator
+                if (response.ok) {
+                    return response
+                } else {
+                    const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                    error.response = response;
+                    throw error;
+                }
+            },
+            error => {
+                const errMess = new Error(error.message);
+                throw errMess;
+            }
+        )
+        .then(response => response.json()) //When a post request is successful, json server will send back the data that was sent in JSON format & will insert a unique ID along with it. Convert the response back to JavaScript with this ".json" method & dispatch it with the line below.
+        .then(response => dispatch(addStore(response))) //Updates the redux store with the response created in the line above (a store object in JavaScript format)
+        .catch(error => { //Catches any rejected promises or error "throw" 
+            console.log('post store', error.message);
+            alert('Your store could not be posted\nError: ' + error.message);
+        });
 };
 
 //Function for adding new store to Redux store after successful server post from "addStoreSubmit" action creator
 export const addStore = store => ({ //Server's response (which is the store object) is passed as the argument and renamed 'store'
     type: ActionTypes.ADD_STORE,
     payload: store //The 'payload' for this action will be a complete store object sent back from the server response that will be added to the "storesArray" via the reducer
+});
+
+//Function to update the Redux store 'storesArray' with a new 'storesArray' where the styles of the store objects have been changed to reflect which store has been selected.
+export const storeSelect = storesArray => ({ //This action creator is called from <Main> component's function called "storeSelect" and is passed the 'storesArray' argument which is renamed as 'storesArray'.
+    type: ActionTypes.SELECT_STORE,
+    payload: storesArray //The 'payload' for this action will be a copy of the 'storesArray' (made from the Redux store that is available in 'MainComponent.js' ) where styles of the store objects have been changed to reflect which store has been selected. Array will replace the "storesArray" in Redux state via the reducer
 });
