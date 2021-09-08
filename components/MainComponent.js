@@ -10,7 +10,7 @@ import AddItemOverlay from './AddItemOverlayComponent';
 import AddStoreOverlay from './AddStoreOverlayComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { connect } from 'react-redux';
-import { addItemSubmit, addStoreSubmit, fetchItems, fetchStores } from '../redux/ActionCreators'
+import { addItemSubmit, addStoreSubmit, fetchItems, fetchStores, storeSelect } from '../redux/ActionCreators'
 //Container component that will be parent to presentational components. Holds "itemArray", "storesArray", other state values, and functions that operate on the array/state and passes them to the various components
 
 const mapStateToProps = state => { //'mapStateToProps' function takes the current state of the entire Redux store and adds the portion of it specified in the 'return' block to the 'props' for this component. An argument is automatically passed to the 'mapStateToProps' function by the 'connect' function ('connect' is a built in function from Redux) because the 'mapStateToProps' function is used as the first argument in the 'connect' function. The argument that is automatically passed is renamed 'state' here, but it could be renamed anything.
@@ -24,7 +24,8 @@ const mapDispatchToProps = { //Action creators to be dispatched are imported fro
     fetchItems,
     addItemSubmit,
     fetchStores,
-    addStoreSubmit
+    addStoreSubmit,
+    storeSelect
 };
 
 class Main extends Component {
@@ -116,24 +117,18 @@ class Main extends Component {
         this.setState({itemArray: updatedItemArray}, () => {this.storeData(this.state.itemArray, 'itemArray')}); //replace the current "itemArray" in state with the "updatedItemArray". After that operation is completed, execute the callback function which stores the "itemArray" in state under the key 'itemArray'.
     }
 
-    //Function to change the current state of the property "selectedStore" and to change the style properties of the selected store within "StoreListItemComponent". "selectedStore" will be a property of a new item when the item is added ((make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent")
-    storeSelect = (storeName, storeDisplayName) => { //Receives the normalized "storeName" (and renames it "storeName") and "storeDisplayName" (and renames it "storeDisplayName") properties as arguments from the "storesArray" object that was selected from "StoreListItemComponent"
-        this.setState({selectedStore: storeName, selectedStoreDisplayName: storeDisplayName}); //replace the current string that is in "selectedStore" state which will be submitted as the "storeName" property in the "addItemSubmit" object. Replace the current string that is in the "selectedStoreDisplayName" which will be displayed by the toast in the "removeStore" function.
-        
-        let updatedStoresArray = this.state.storesArray;//Define "updatedStoresArray" as a variable that can be re-assigned, give it initial value of the "storesArray" that is currently in state.
-        updatedStoresArray.map( storeObject => { //Iterates through the "updatedStoresArray" (which is an array of objects) and performs the following code on each object which is renamed to "storeObject"
-                if (storeObject.storeName === storeName) { //If the current "storeObject" being iterated over matches the normalized "storeName" that was passed in from the "StoreListItemComponent", change the following two style attributes that will make it look selected. Getting spread syntax to work will take more research....
-                    storeObject.backgroundColor = "grey"; //~~~!!!~~~Could create a "styles" object for these (like done in "checkBoxToggle" function) and pass entire styles object to "StoreListItemComponent", but would result is similar length code
-                    storeObject.color = 'white';
-                } else { //If the current "storeObject" being iterated over does not match the "id" that was passed in from the "StoreListItemComponent", change the following two style attributes that will make it look un-selected (need to perform this step to reset the text properties so it does not look like multiple things are selected). Getting spread syntax to work will take more research....
-                    storeObject.backgroundColor = "white";
-                    storeObject.color = 'black';
-                }
-                return storeObject //Returns the "storeObject" of the current iteration to the new array "updatedStoresArray" (return can't be inside "if" or "else" block or the function will stop running as soon as the firt object enters one of those blocks)
+    //Function to change the current local state values of the keys "storeName" & "storeDisplayName" and to change the style properties of the selected store within "StoreListItemComponent". "storeName" & "storeDisplayName" will be properties of a new item when the item is added ((make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent")
+    storeSelect = (storeName, storeDisplayName) => { //Receives the normalized "storeName" (and renames it "storeName") and "storeDisplayName" (and renames it "storeDisplayName") properties as arguments from the "storesArray" object that was selected in the "StoreListItemComponent"
+        this.setState({selectedStore: storeName, selectedStoreDisplayName: storeDisplayName}); //replace the current string that is in "selectedStore" local state which will be submitted as the "storeName" property in the "addItemSubmit" object. Replace the current string that is in the "selectedStoreDisplayName" local state which will be submitted as the "storeDisplayName" property in the "addItemSubmit" object & displayed by the toast in the "removeStore" function.
+        const updatedStoresArray = this.props.storesArray.map( storeObject => { //Create a new array of store objects (based on the array of store objects that is in the Redux Store current state which is available as props) with styles to reflect which store is selected. The new array is assigned to variable "updatedStoresArray" & is created by the ".map" method. ".map" iterates through the "storesArray" that is in the Redux Store current state and performs the following code on each object (which is renamed to "storeObject") within the "storesArray".
+            let updatedStoreObject = { ...storeObject }; //Use spread syntax to create a new store object called "updatedStoreObject" which is a copy of the current store object being iterated over. MUST create a new store object for this to work, if the "storeObject" being iterated over is itself modified, ".map" will mutate the original "storesArray" AND make the "updatedStoresArray" just point to the mutated array. 
+            if (storeObject.storeName === storeName) { //If the current "storeObject" being iterated over matches the normalized "storeName" that was passed in from the "StoreListItemComponent", change the following two style attributes that will make it look selected.
+                return {...updatedStoreObject, backgroundColor: "gray", color: 'white'} //Use spread syntax to access all key/values in "updatedStoreObject" and change the "backgroundColor" and "color". 
+            } else { //If the current "storeObject" being iterated over does not match the normalized "storeName" that was passed in from the "StoreListItemComponent", change the following two style attributes that will make it look un-selected (need to perform this step to reset the text properties so it does not look like multiple things are selected).
+                return {...updatedStoreObject, backgroundColor: "white", color: 'black'} //Use spread syntax to access all key/values in "updatedStoreObject" and change the "backgroundColor" and "color". 
             }
-        )
-
-        this.setState({storesArray: updatedStoresArray}); //replace "storesArray" in state with the "updatedStoresArray" which has the selected store object with styles that make it look selected
+        })
+        this.props.storeSelect(updatedStoresArray); //Pass the 'updatedStoresArray' to the 'storeSelect' Action Creator function. 'storeSelect' Action Creator will pass the array to Reducer which will update the Redux store.
     }
 
     //Function "storeDeselect" to reset the stores list to show nothing as selected when the Add Item  overlay or Add/Remove Stores overlay is closed
@@ -209,7 +204,7 @@ class Main extends Component {
             
             let storeName = this.state.addInput.toLowerCase().replace(/\s+/g, '') //Normalized store name: variable "storeName" is created which takes what the user input as the store's name, sets it all to lowercase and removes all whitespace (+ will remove chunks of whitespace at a time, with no +, each space has to be replaced individually)
 
-            let storeCheckArray = this.props.storesArray.filter( storeObject => {//This line creates a new array "storeCheckArray" to check if the store to be added is already in the "storesArray" in state. "filter" the "storesArray" in the Redux store (which is available as props) by passing each object in renamed as "storeObject" 
+            let storeCheckArray = this.props.storesArray.filter( storeObject => {//This line creates a new array "storeCheckArray" to check if the store to be added is already in the "storesArray" in Redux Store current state. "filter" the "storesArray" in the Redux store (which is available as props) by passing each object in renamed as "storeObject" 
                 return storeObject.storeName === storeName; //Check if the normalized "storeName" of the "storeObject" being iterated over is equal to the normalized store name being added. "storeCheckArray" will be an array of length 0 if there is no match.
             })
 

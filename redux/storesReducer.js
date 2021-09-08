@@ -31,6 +31,9 @@ export const stores = (state = {storesArray: [], errMess: null}, action) => {//R
             toast(`${store.storeDisplayName} added!`); //Notify user that store was added successfully
             return {...state, errMess: null, storesArray: state.storesArray.concat(store)};// Return a new state with the 'storesArray' that was in state with the new store tacked onto the end of the array via 'concat'. Set the 'errMess' to null to clear out any error messages.
         
+        case ActionTypes.SELECT_STORE: //Action of updating the 'storesArray' object (update with styles to make a store look selected) of the 'stores' portion of the Redux state after a store is selected in one of the <Overlay>s.
+            return {...state, errMess: null, storesArray: action.payload} // Return a new state replacing the 'storesArray' that was in state with a new 'storesArray' where the styles of the store objects have been changed to reflect which store has been selected. Set the 'errMess' to null to clear out any error messages.   
+
         default: 
             return state; //If the 'action.type' is not matched, return the state that is already in the store.
     }

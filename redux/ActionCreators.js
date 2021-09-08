@@ -164,7 +164,7 @@ export const addStore = store => ({ //Server's response (which is the store obje
 });
 
 //Function to update the Redux store 'storesArray' with a new 'storesArray' where the styles of the store objects have been changed to reflect which store has been selected.
-export const storeSelect = storesArray => ({ //This action creator is called from <Main> component's function called "storeSelect" and is passed the 'storesArray' argument which is renamed as 'storesArray'.
+export const storeSelect = storesArray => ({ //This action creator is called from <Main> component's function called "storeSelect" and is passed the 'updatedStoresArray' argument which is renamed as 'storesArray'.
     type: ActionTypes.SELECT_STORE,
     payload: storesArray //The 'payload' for this action will be a copy of the 'storesArray' (made from the Redux store that is available in 'MainComponent.js' ) where styles of the store objects have been changed to reflect which store has been selected. Array will replace the "storesArray" in Redux state via the reducer
 });
