@@ -133,12 +133,12 @@ class Main extends Component {
 
     //Function "storeDeselect" to reset the stores list to show nothing as selected when the Add Item  overlay or Add/Remove Stores overlay is closed
     storeDeselect = () => {
-        let updatedStoresArray = this.props.storesArray.map( storeObject =>{ //Define "updatedStoresArray" as a variable that and give it initial value of the "storesArray" that is currently in state. "map" iterates through the "updatedStoresArray" (which is an array of objects) and performs the following code on each object which is renamed to "storeObject"
-            storeObject.backgroundColor = "white"; //~~~!!!~~~Could create a "styles" object for these (like done in "checkBoxToggle" function) and pass entire styles object to "StoreListItemComponent", but would result is similar length code
-            storeObject.color = 'black';
-            return storeObject //Returns the "storeObject" of the current iteration to the new array "updatedStoresArray" 
-        })
-        this.setState({storesArray: updatedStoresArray, selectedStore: ''});//replace "storesArray" in state with the "updatedStoresArray" which has all store objects with styles that make them look not selected. Also replace the text in the "selectedStore" state with an empty string because "addItemSubmit" function checks this state to see if a store is selected.
+        const updatedStoresArray = this.props.storesArray.map( storeObject => { //Create a new array of store objects (based on the array of store objects that is in the Redux Store current state which is available as props) with styles to reflect all stores as unselected. The new array is assigned to variable "updatedStoresArray" & is created by the ".map" method. ".map" iterates through the "storesArray" that is in the Redux Store current state and performs the following code on each object (which is renamed to "storeObject") within the "storesArray".
+            let updatedStoreObject = { ...storeObject }; //Use spread syntax to create a new store object called "updatedStoreObject" which is a copy of the current store object being iterated over. MUST create a new store object for this to work, if the "storeObject" being iterated over is itself modified, ".map" will mutate the original "storesArray" AND make the "updatedStoresArray" just point to the mutated array. 
+            return {...updatedStoreObject, backgroundColor: "white", color: 'black'} //Use spread syntax to access all key/values in "updatedStoreObject" and change the "backgroundColor" and "color". 
+        })    
+        this.setState({selectedStore: ''});//Replace the text in the "selectedStore" state with an empty string because "addItemSubmit" function checks this state to see if a store is selected. Without this line, user could add an item without touching a store because in the backgroud, a store is selected but not displayed as selected.
+        this.props.storeSelect(updatedStoresArray); //Pass the 'updatedStoresArray' to the 'storeSelect' Action Creator function. 'storeSelect' Action Creator will pass the array to Reducer which will update the Redux store.
     }
 
     //Function "deleteCheckedItems"  to delete all checked items (make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent")
