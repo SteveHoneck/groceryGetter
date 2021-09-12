@@ -19,9 +19,9 @@ toast = (message) => { //Receives a string as an argument which is named "messag
 //Reducer function to handle the 'stores' part of the Redux state. A part of the Redux state is created and called 'stores' and exported.
 export const stores = (state = {storesArray: [], errMess: null}, action) => {//Reducers take 2 parameters: 1st is the state that is already in the store (The first time the reducer is called, the state will not exist. Default function prameter syntax (  state = {storesArray: []})  ) will be used to initialize the part of the state handled by this reducer if the state does not exist, this initializes the 'stores' part of the state as an object containing an empty array called 'storesArray' ). 2nd parameter is an action object. The body of the reducer funciton will check for the type of the action and return the state.
     switch (action.type){
-        case ActionTypes.LOAD_STORES: //Action of updating the 'stores' portion of the Redux state (which contains the 'storesArray' and an 'errMess') after the 'storesArray' has been successfully fetched from the server.
-            if (action.payload.storeDisplayName) { //ADDED 'if' statement, EXPLANATION COMMENT
-                toast(`${action.payload.storeDisplayName} removed!`); //Notify user that store was added successfully
+        case ActionTypes.LOAD_STORES: //Action of updating the 'stores' portion of the Redux state (which contains the 'storesArray' and an 'errMess') after the 'storesArray' has been successfully fetched from the server. The 'loadStores' Action Creator can be called when the application loads, or when a store is removed from the 'storesArray' via the 'removeStoreSubmit' Action Creator.
+            if (action.payload.storeDisplayName) { //If the 'loadStores' Action Creator is called by the 'removeStoreSubmit' ActionCreator, the 'payload' object will contain a truthy value in the 'storeDisplayName' key/value. This allows the 'if' block to be entered and notify the user tha ta store was removed.
+                toast(`${action.payload.storeDisplayName} removed!`); //Notify user that store was removed successfully
             }
             return {...state, storesArray: action.payload.storesArray, errMess: null}; // Return a new state updated with the 'storesArray' that was fetched from the server and stored in 'action.payload' and the 'errMess' set to 'null' because since something was sucessfully fetched from the server, there must be no error message.
 
