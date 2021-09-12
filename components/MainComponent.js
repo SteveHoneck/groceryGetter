@@ -10,7 +10,7 @@ import AddItemOverlay from './AddItemOverlayComponent';
 import AddStoreOverlay from './AddStoreOverlayComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { connect } from 'react-redux';
-import { addItemSubmit, addStoreSubmit, fetchItems, fetchStores, storeSelect } from '../redux/ActionCreators'
+import { addItemSubmit, addStoreSubmit, fetchItems, fetchStores, storeSelect, removeStoreSubmit } from '../redux/ActionCreators'
 //Container component that will be parent to presentational components. Holds "itemArray", "storesArray", other state values, and functions that operate on the array/state and passes them to the various components
 
 const mapStateToProps = state => { //'mapStateToProps' function takes the current state of the entire Redux store and adds the portion of it specified in the 'return' block to the 'props' for this component. An argument is automatically passed to the 'mapStateToProps' function by the 'connect' function ('connect' is a built in function from Redux) because the 'mapStateToProps' function is used as the first argument in the 'connect' function. The argument that is automatically passed is renamed 'state' here, but it could be renamed anything.
@@ -25,7 +25,8 @@ const mapDispatchToProps = { //Action creators to be dispatched are imported fro
     addItemSubmit,
     fetchStores,
     addStoreSubmit,
-    storeSelect
+    storeSelect,
+    removeStoreSubmit
 };
 
 class Main extends Component {
@@ -38,7 +39,8 @@ class Main extends Component {
             addInput: '',//State for input from "addItem" overlay and "addStore" overlay. This same state can be used for both because they are never active at the same time
             selectedStore: '', //State for holding the normalized text string of storeName selected in "addItem" <Overlay>
             selectedStoreDisplayName: '', //State for holding the text string of the store name as it was typed in by user
-            addStoreOverlayVisible: false, 
+            addStoreOverlayVisible: false,
+            storeId: '' //ADDED, EXPLANATION COMMENT
         };
         //this.removeFew(); //DEV CODE: enable this line and "removeFew" function to erase local storage
 //        this.getData('itemArray', 'storesArray');  //Function to retrieve any data stored under the keys "itemArray" and "storesArray", called when the application is first constructed
@@ -118,8 +120,8 @@ class Main extends Component {
     }
 
     //Function to change the current local state values of the keys "storeName" & "storeDisplayName" and to change the style properties of the selected store within "StoreListItemComponent". "storeName" & "storeDisplayName" will be properties of a new item when the item is added ((make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent")
-    storeSelect = (storeName, storeDisplayName) => { //Receives the normalized "storeName" (and renames it "storeName") and "storeDisplayName" (and renames it "storeDisplayName") properties as arguments from the "storesArray" object that was selected in the "StoreListItemComponent"
-        this.setState({selectedStore: storeName, selectedStoreDisplayName: storeDisplayName}); //replace the current string that is in "selectedStore" local state which will be submitted as the "storeName" property in the "addItemSubmit" object. Replace the current string that is in the "selectedStoreDisplayName" local state which will be submitted as the "storeDisplayName" property in the "addItemSubmit" object & displayed by the toast in the "removeStore" function.
+    storeSelect = (storeName, storeDisplayName, id) => { //ADDED 'id', EXPLANATION COMMENT Receives the normalized "storeName" (and renames it "storeName") and "storeDisplayName" (and renames it "storeDisplayName") properties as arguments from the "storesArray" object that was selected in the "StoreListItemComponent"
+        this.setState({selectedStore: storeName, selectedStoreDisplayName: storeDisplayName, storeId: id}); //ADDED 'id', EXPLANATION COMMENT replace the current string that is in "selectedStore" local state which will be submitted as the "storeName" property in the "addItemSubmit" object. Replace the current string that is in the "selectedStoreDisplayName" local state which will be submitted as the "storeDisplayName" property in the "addItemSubmit" object & displayed by the toast in the "removeStore" function.
         const updatedStoresArray = this.props.storesArray.map( storeObject => { //Create a new array of store objects (based on the array of store objects that is in the Redux Store current state which is available as props) with styles to reflect which store is selected. The new array is assigned to variable "updatedStoresArray" & is created by the ".map" method. ".map" iterates through the "storesArray" that is in the Redux Store current state and performs the following code on each object (which is renamed to "storeObject") within the "storesArray".
             let updatedStoreObject = { ...storeObject }; //Use spread syntax to create a new store object called "updatedStoreObject" which is a copy of the current store object being iterated over. MUST create a new store object for this to work, if the "storeObject" being iterated over is itself modified, ".map" will mutate the original "storesArray" AND make the "updatedStoresArray" just point to the mutated array. 
             if (storeObject.storeName === storeName) { //If the current "storeObject" being iterated over matches the normalized "storeName" that was passed in from the "StoreListItemComponent", change the following two style attributes that will make it look selected.
@@ -137,7 +139,7 @@ class Main extends Component {
             let updatedStoreObject = { ...storeObject }; //Use spread syntax to create a new store object called "updatedStoreObject" which is a copy of the current store object being iterated over. MUST create a new store object for this to work, if the "storeObject" being iterated over is itself modified, ".map" will mutate the original "storesArray" AND make the "updatedStoresArray" just point to the mutated array. 
             return {...updatedStoreObject, backgroundColor: "white", color: 'black'} //Use spread syntax to access all key/values in "updatedStoreObject" and change the "backgroundColor" and "color". 
         })    
-        this.setState({selectedStore: ''});//Replace the text in the "selectedStore" state with an empty string because "addItemSubmit" function checks this state to see if a store is selected. Without this line, user could add an item without touching a store because in the backgroud, a store is selected but not displayed as selected.
+        this.setState({selectedStore: '', selectedStoreDisplayName: '', storeId: ''});//ADDED 'id', EXPLANATION COMMENTReplace the text in the "selectedStore" state with an empty string because "addItemSubmit" function checks this state to see if a store is selected. Without this line, user could add an item without touching a store because in the backgroud, a store is selected but not displayed as selected.
         this.props.storeSelect(updatedStoresArray); //Pass the 'updatedStoresArray' to the 'storeSelect' Action Creator function. 'storeSelect' Action Creator will pass the array to Reducer which will update the Redux store.
     }
 
@@ -261,9 +263,11 @@ class Main extends Component {
         if (this.state.selectedStore === '') { //Enter statement if there is nothing in the "selectedStore" state, which is denoted by an empty string. "selectedStore" is initially an empty string and returned to an empty string every time "storeDeselect" function is called.
             this.toast('Please select a store!');//Notify user that a store was not selected
         } else {
-            this.toast(`${this.state.selectedStoreDisplayName} removed!`);//Notify user that store was removed successfully. Uses the display name of the store (whos state is set in the "storeSelect" function) as opposed to the normalized name of the store. 
-            const updatedStoresArray = this.state.storesArray.filter( obj => obj.storeName !== this.state.selectedStore ); //Make a copy of the "storesArray" in state, rename it "updatedStoresArray", filters the"updatedStoresArray" (which at this point is what is currently in state) for all objects that do not have the "storeName" property as that is the same as what is in state as "selectedStore". This returns an array of objects that were not selected by the user.
-            this.setState({storesArray: updatedStoresArray, selectedStore: ''}, () => {this.storeData(this.state.storesArray, 'storesArray')});//replace the current "storesArray" in state with the "updatedStoresArray" i.e. an array of all stores that were not selected AND reset the "selectedStore" state to an empty string. After that operation is completed, execute the callback function which stores the "storesArray" in state under the key 'storesArray'.
+            //this.toast(`${this.state.selectedStoreDisplayName} removed!`);//Notify user that store was removed successfully. Uses the display name of the store (whos state is set in the "storeSelect" function) as opposed to the normalized name of the store. 
+            //const updatedStoresArray = this.state.storesArray.filter( obj => obj.storeName !== this.state.selectedStore ); //Make a copy of the "storesArray" in state, rename it "updatedStoresArray", filters the"updatedStoresArray" (which at this point is what is currently in state) for all objects that do not have the "storeName" property as that is the same as what is in state as "selectedStore". This returns an array of objects that were not selected by the user.
+            //this.setState({storesArray: updatedStoresArray, selectedStore: ''}, () => {this.storeData(this.state.storesArray, 'storesArray')});//replace the current "storesArray" in state with the "updatedStoresArray" i.e. an array of all stores that were not selected AND reset the "selectedStore" state to an empty string. After that operation is completed, execute the callback function which stores the "storesArray" in state under the key 'storesArray'.
+            this.props.removeStoreSubmit(this.state.storeId, this.state.selectedStoreDisplayName)//ADDED, EXPLANATION COMMENT
+            this.setState({selectedStore: '', storeId: '', storeDisplayName: ''})//ADDED, EXPLANATION COMMENT
         }
     }
 

@@ -3,7 +3,6 @@
 export const LOAD_STORES = 'LOAD_STORES'; //Action for fetching the 'storesArray' from the server. ACTION CREATOR WILL NEED SERVER CALL.
 export const STORES_FAILED = 'STORES_FAILED'; //Action for if fetching the 'storesArray' from the server fails
 export const ADD_STORE = 'ADD_STORE'; //Action for adding a store to the 'storesArray'. ACTION CREATOR WILL NEED SERVER CALL.
-export const REMOVE_STORE = 'REMOVE_STORE';//Action for removing a store to the 'storesArray'. ACTION CREATOR WILL NEED SERVER CALL.
 export const SELECT_STORE = 'SELECT_STORE';//Action for selecting a store (updating a store object's key/values to make it look selected). Will not need server call because all store objects are set to look deselected every time the <StoreList> is initially loaded, therefore, whatever store objects come from server can always have key/values that look deselected.
 export const DESELECT_STORE = 'DESELECT_STORE';//Action for deselecting a store (updating a store object's key/values to make it look deselected). Will not need server call because all store objects are set to look deselected every time the <StoreList> is initially loaded, therefore, whatever store objects come from server can always have key/values that look deselected.
 

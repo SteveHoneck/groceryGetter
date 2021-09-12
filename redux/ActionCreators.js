@@ -85,7 +85,7 @@ export const addItem = item => ({ //Server's response (which is the item object)
 
 
 //Action Creators for Stores Array
-export const fetchStores = () => dispatch => { //Able to use an arrow function wrapped in an arrow function due to enabling Redux Thunk. This allows the "dispatch" method to be passed to the inner function. 'dispatch' is a built in method from the Redux Store, since 'thunk' is activated in the 'createStore' function via 'applyMiddleware' argument, it gains access to the 'dispatch' method and allows it to be passed here via an arrow function wrapped in an arrow function .
+export const fetchStores = (storeDisplayName) => dispatch => { //ADDED 'storeDisplayName', EXPLANATION COMMENT Able to use an arrow function wrapped in an arrow function due to enabling Redux Thunk. This allows the "dispatch" method to be passed to the inner function. 'dispatch' is a built in method from the Redux Store, since 'thunk' is activated in the 'createStore' function via 'applyMiddleware' argument, it gains access to the 'dispatch' method and allows it to be passed here via an arrow function wrapped in an arrow function .
 
     return fetch(baseUrl + 'storesArray') //'fetch' returns a promise that resolves to a 'response' object
             .then(response => {//First callback method for the '.then' method, handles a resolved promise from 'fetch'
@@ -103,13 +103,13 @@ export const fetchStores = () => dispatch => { //Able to use an arrow function w
             }
         )
         .then(response => response.json()) //The 'response' returned from 'fetch' is not just data from the response body, it's a representation of the entire HTTP response. '.json()' method will extract the JSON response body content.
-        .then(storesArray => dispatch(loadStores(storesArray))) //Calling 'dispatch' passes the inner argument ('loadStores') to the Redux 'store' (since 'dispatch' is a built in method available from the Redux store when 'createStore' is called from the Redux library). The Redux store calls the root reducer created by 'combineReducers' in the 'configureStore' file. The root reducer is a combination of all the reducer files, therefore, the 'loadStores' function/action creator is passed to the Redux store, then to all the 'switch' cases in all reducer files, and when matched to a switch case, the appropriate reducer code is ran and the Redux store is updated.
+        .then(storesArray => dispatch(loadStores(storesArray, storeDisplayName))) //ADDED 'storeDisplayName', EXPLANATION COMMENT Calling 'dispatch' passes the inner argument ('loadStores') to the Redux 'store' (since 'dispatch' is a built in method available from the Redux store when 'createStore' is called from the Redux library). The Redux store calls the root reducer created by 'combineReducers' in the 'configureStore' file. The root reducer is a combination of all the reducer files, therefore, the 'loadStores' function/action creator is passed to the Redux store, then to all the 'switch' cases in all reducer files, and when matched to a switch case, the appropriate reducer code is ran and the Redux store is updated.
         .catch(error => dispatch(storesFailed(error.message))); //Catches all and any errors thrown by the promise chain and passes the ".message" property of the error object to the "storesFailed" function
 };
 
-export const loadStores = storesArray => ({ //Action for taking the fetched 'storesArray' from the server and sending the 'storesArray' to the 'storesReducer.js' file
+export const loadStores = (storesArray, storeDisplayName) => ({ //ADDED 'storeDisplayName', EXPLANATION COMMENTAction for taking the fetched 'storesArray' from the server and sending the 'storesArray' to the 'storesReducer.js' file
     type: ActionTypes.LOAD_STORES,
-    payload: storesArray //'loadStores' is called in 'fetch' / '.then' chain and that call takes the fetched 'storesArray', names it 'storesArray' and passes as an argument to 'loadStores'. Here, 'loadStores' receives the fetched 'storesArray' as an argument, renames it 'storesArray' and packages it as the value to the key 'payload' 
+    payload: {storesArray, storeDisplayName} //ADDED 'storeDisplayName', EXPLANATION COMMENT'loadStores' is called in 'fetch' / '.then' chain and that call takes the fetched 'storesArray', names it 'storesArray' and passes as an argument to 'loadStores'. Here, 'loadStores' receives the fetched 'storesArray' as an argument, renames it 'storesArray' and packages it as the value to the key 'payload' 
 });
 
 export const storesFailed = errMess => ({ //Action for if fetching the 'storesArray' from the server fails or returns something not in the http success range
@@ -117,7 +117,7 @@ export const storesFailed = errMess => ({ //Action for if fetching the 'storesAr
     payload: errMess //'storesFailed' is called in 'fetch' / '.then' chain and that call takes any error returned by the promise chain, names it 'error' and passes the '.message' property of that 'error' as an argument to 'storesFailed'. Here, 'storesFailed' receives the 'error.message' as an argument, renames it 'errMess' and packages it as the value to the key 'payload' 
 });
 
-//Function for Posting new store to server / checking if store is already in array on server
+//Function for Posting new store to server. Checking if store is already in array on server is done by checking if the store exists in the Redux Store before running this Action Creator. Redux Store is a reflection of the server array, so if it is in the Redux Store, it must be in the server array.
 export const addStoreSubmit = (storeDisplayName, storeName) => dispatch => { //Action for when user touches the 'add' button in the <AddStoreOverlay>. This action creator is called from <Main> component and is passed the 'addInput' property from the <Main> component local state as 1st argument and the normailzed store name as the 2nd argument. It will post the new store to the server and dispatch an action to update the Redux store
        
     const newStore = { //Create a new store object called "newStore" that will be posted to the "storesArray" in the server
@@ -168,3 +168,33 @@ export const storeSelect = storesArray => ({ //This action creator is called fro
     type: ActionTypes.SELECT_STORE,
     payload: storesArray //The 'payload' for this action will be a copy of the 'storesArray' (made from the Redux store that is available in 'MainComponent.js' ) where styles of the store objects have been changed to reflect which store has been selected. Array will replace the "storesArray" in Redux state via the reducer
 });
+
+//ADDED 'removeStoreSubmit' function, EXPLANATION COMMENT
+//Function for Removing a store to server. Checking if store is in array on server so that it can be removed is done in the 'MainComponent'
+export const removeStoreSubmit = (id, storeDisplayName) => dispatch => { //Action for when user touches the 'remove' button in the <AddStoreOverlay>. This action creator is called from <Main> component and is passed the 'storeName' normailzed store name property from the <Main> component local state as 1st argument. It will remove the selected store from the server and dispatch an action to update the Redux store
+        
+    return fetch(baseUrl + 'storesArray/' + id, { //'fetch' returns a promise that resolves to a 'response' object. First argument passed is the URL to access, second argument is an object to specify the "fetch" call as a "DELETE" request and appropriate associated settings needed for a delete request.
+        method: "DELETE"
+    })
+        .then(response => { //See notes from error handling in "fetchItems" Action Creator
+                if (response.ok) {
+                    return response
+                } else {
+                    const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                    error.response = response;
+                    throw error;
+                }
+            },
+            error => {
+                const errMess = new Error(error.message);
+                throw errMess;
+            }
+        )
+        //.then(response => response.json()) //When a delete request is successful, ??????json server will send back the data that was sent in JSON format & will insert a unique ID along with it. Convert the response back to JavaScript with this ".json" method & dispatch it with the line below.??????
+        //.then(response => dispatch(removeStore(response))) //Updates the redux store with the response created in the line above ?????(a store object in JavaScript format)???????
+        .then(dispatch(fetchStores(storeDisplayName)))
+        .catch(error => { //Catches any rejected promises or error "throw" 
+            console.log('delete store', error.message);
+            alert('Your store could not be deleted\nError: ' + error.message);
+        });
+};
