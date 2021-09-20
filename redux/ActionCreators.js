@@ -83,6 +83,24 @@ export const addItem = item => ({ //Server's response (which is the item object)
     payload: item //The 'payload' for this action will be a complete item object sent back from the server response that will be added to the "itemArray" via the reducer  
 });
 
+//Function for Removing an item from the server. Checking if the item is in the array on server so that it can be removed is done (although not done explicitly) in the 'MainComponent' because if the item is not in the Redux Store, it will not be able to be selected by the user. Redux Store is a reflection of the server array, so if it is in the Redux Store, it must be in the server array.
+//Perhaps a better architecture here would be for the "removeItemsSubmit" Action Creator to not call the 'fetchItems' Action Creator directly but to call a "removeItems" Action Creator function which only has the purpose of calling the "fetchItems" Action Creator (how would this work with the Reducer? There would be no payload and wouldn't want the Reducer to try to call an Action Creator, that seems like a backward way of calling everything). That way, there will be a 'REMOVE_ITEMS' Action Type in the "ActionTypes.js" file so that if a developer is looking through the "ActionTypes.js" file to see what actions can take place, 'REMOVE_ITEMS' is in there for completeness. As the code is written now, it is not apparent that removing an item causes an action to be dispatched.
+export const removeItemsSubmit = (itemIdsToDeleteArray) => dispatch => { // The 'deleteCheckedItems' function in <Main> creates an array of the 'id's of all the items that the user has selected for deletion, 'deleteCheckedItems' calls this 'removeItemsSubmit' function and passes that array of 'id's as the argument which is received here and renamed 'itemIdsToDeleteArray'.
+    for (id of itemIdsToDeleteArray) {//Iterate through the 'itemIdsToDeleteArray', name each item in the array that is being iterated over "id". For every 'id' send a 'fetch' DELETE request to delete the item with matching 'id' from the array on the server
+        fetch(
+            baseUrl + 'itemArray/' + id, 
+            {method: "DELETE"}
+        ).then(dispatch(fetchItems())) //This is very messy and wasteful: 1) There will be multiple DELETE and GET requests, only one GET request is needed after the 'for' loop is finished & all promises have resolved 2) Nothing is done with promise/responses and errors 3) as in "removeStoreSubmit", there is no Action Type for "removeItem" because this is using "fetchItems" (which ultimately uses 'LOAD_STORES' Action Type) to update the Redux Store. Doesn't really matter because I can set up server to process 'itemIdsToDeleteArray' directly instead of making a "DELETE" request for each id and return to the client the updated 'itemArray' so that another Action Creator with Action Type "removeItem" can dispatch the updated 'itemArray' as a payload to the Reducer.
+    }
+}
+
+/* 'removeItem' Action Creator and "REMOVE_ITEM" Action Type not currently being used due to not being able to figure out the return value of the 'fetch' DELETE call, if the return value was an updated array or the object that was deleted, either of those could passed the the Reducer via this Action Creator.
+
+export const removeItem = item => ({ 
+    type: ActionTypes.REMOVE_ITEM,
+    payload: item 
+});
+*/
 
 //Action Creators for Stores Array
 
@@ -172,6 +190,7 @@ export const storeSelect = storesArray => ({ //This action creator is called fro
 });
 
 //Function for Removing a store from the server. Checking if store is in the array on server so that it can be removed is done (although not done explicitly) in the 'MainComponent' because if the store is not in the Redux Store, it will not be able to be selected by the user. Redux Store is a reflection of the server array, so if it is in the Redux Store, it must be in the server array.
+//Perhaps a better architecture here would be for the "removeStoreSubmit" Action Creator to not call the 'fetchStores' Action Creator directly but to call a "removeStore" Action Creator function which only has the purpose of calling the "fetchStores" Action Creator (how would this work with the Reducer? There would be no payload and wouldn't want the Reducer to try to call an Action Creator, that seems like a backward way of calling everything). That way, there will be a 'REMOVE_STORE' Action Type in the "ActionTypes.js" file so that if a developer is looking through the "ActionTypes.js" file to see what actions can take place, 'REMOVE_STORE' is in there for completeness. As the code is written now, it is not apparent that removing a store causes an action to be dispatched.
 export const removeStoreSubmit = (id, storeDisplayName) => dispatch => { //Action Creator that is called when user touches the 'remove' button in the <AddStoreOverlay>. This action creator is called from within the 'removeStore' function in the <Main> component and is passed the 'storeId' (which is renamed to 'id') and the 'selectedStoreDisplayName' (which is renamed to 'storeDisplayName') from <Main> component's local state. It will remove the selected store (via the selected store's "id" key/value) from the array on the server and dispatch an action to fetch that updated array from the server and use that updated array to update the Redux Store
         
     return fetch(baseUrl + 'storesArray/' + id, { //'fetch' returns a promise that resolves to a 'response' object (I am unsure what the response object contains other than the "ok" key/value (does it echo back the deleted object or the updated array without the deleted object?). I was not able to find good documentation on it). First argument passed is the URL to access (a DELETE request seems to only work by accessing an "id" key/value of an object, I can't delete by "storeName" for instance), second argument is an object to specify the "fetch" call as a "DELETE" request.
@@ -198,4 +217,10 @@ export const removeStoreSubmit = (id, storeDisplayName) => dispatch => { //Actio
         });
 };
 
-//Perhaps a better architecture here would be for the "removeStoreSubmit" Action Creator to not call the 'fetchStores' Action Creator directly but to call a "removeStore" Action Creator function which only has the purpose of calling the "fetchStores" Action Creator. That way, there will be a 'REMOVE_STORE' Action Type in the "ActionTypes.js" file so that if a developer is looking through the "ActionTypes.js" file to see what actions can take place, 'REMOVE_STORE' is in there for completeness. As the code is written now, it is not apparent that removing a store causes an action to be dispatched.
+/* 'removeStore' Action Creator and "REMOVE_STORE" Action Type not currently being used due to not being able to figure out the return value of the 'fetch' DELETE call, if the return value was an updated array or the object that was deleted, either of those could passed the the Reducer via this Action Creator.
+
+export const removeStore = store => ({ 
+    type: ActionTypes.REMOVE_STORE,
+    payload: store
+});
+*/

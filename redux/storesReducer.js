@@ -36,6 +36,12 @@ export const stores = (state = {storesArray: [], errMess: null}, action) => {//R
         
         case ActionTypes.SELECT_STORE: //Action of updating the 'storesArray' object (update with styles to make a store look selected) of the 'stores' portion of the Redux state after a store is selected in one of the <Overlay>s.
             return {...state, errMess: null, storesArray: action.payload} // Return a new state replacing the 'storesArray' that was in state with a new 'storesArray' where the styles of the store objects have been changed to reflect which store has been selected. Set the 'errMess' to null to clear out any error messages.   
+        
+        /* "REMOVE_STORE" Action Type not currently being used due to not being able to figure out the return value of the 'fetch' DELETE call, if the return value was an updated array or the object that was deleted, either of those could passed the the Reducer via this Action Type. 
+        
+        case ActionTypes.REMOVE_STORE:
+            return {...state, }
+        */
 
         default: 
             return state; //If the 'action.type' is not matched, return the state that is already in the store.

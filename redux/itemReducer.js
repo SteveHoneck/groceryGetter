@@ -30,7 +30,13 @@ export const item = (state = {itemArray: [], errMess: null}, action) => {//Reduc
             
             toast(`${item.item} added!`); //Notify user that item was added successfully
             return {...state, errMess: null, itemArray: state.itemArray.concat(item)};// Return a new state with the 'itemArray' that was in state with the new item tacked onto the end of the array via 'concat'. Set the 'errMess' to null to clear out any error messages.
-            
+
+        /* "REMOVE_ITEM" Action Type not currently being used due to not being able to figure out the return value of the 'fetch' DELETE call, if the return value was an updated array or the object that was deleted, either of those could passed the the Reducer via this Action Type.   
+        
+        case ActionTypes.REMOVE_ITEM:
+            return {...state, }
+        */  
+
         default: 
             return state; //If the 'action.type' is not matched, return the state that is already in the store.
     }

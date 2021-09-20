@@ -10,7 +10,7 @@ import AddItemOverlay from './AddItemOverlayComponent';
 import AddStoreOverlay from './AddStoreOverlayComponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { connect } from 'react-redux';
-import { addItemSubmit, addStoreSubmit, fetchItems, fetchStores, storeSelect, removeStoreSubmit } from '../redux/ActionCreators'
+import { addItemSubmit, addStoreSubmit, fetchItems, fetchStores, storeSelect, removeStoreSubmit, removeItemsSubmit } from '../redux/ActionCreators'
 //Container component that will be parent to presentational components. Holds "itemArray", "storesArray", other state values, and functions that operate on the array/state and passes them to the various components
 
 const mapStateToProps = state => { //'mapStateToProps' function takes the current state of the entire Redux store and adds the portion of it specified in the 'return' block to the 'props' for this component. An argument is automatically passed to the 'mapStateToProps' function by the 'connect' function ('connect' is a built in function from Redux) because the 'mapStateToProps' function is used as the first argument in the 'connect' function. The argument that is automatically passed is renamed 'state' here, but it could be renamed anything.
@@ -26,7 +26,8 @@ const mapDispatchToProps = { //Action creators to be dispatched are imported fro
     fetchStores,
     addStoreSubmit,
     storeSelect,
-    removeStoreSubmit
+    removeStoreSubmit,
+    removeItemsSubmit
 };
 
 class Main extends Component {
@@ -145,12 +146,17 @@ class Main extends Component {
 
     //Function "deleteCheckedItems"  to delete all checked items (make arrow function so don't have to bind. Must be in "MainComponent" because the function operates on the state in "MainComponent")
     deleteCheckedItems = () => { 
-        const isAnytingSelected = this.state.itemArray.find( obj => obj.isChecked === true ); //Check if "itemArray" in state for anything that has been selected. ".find" will return the first object that has "isChecked = true", otherwise 'undefined' will be returned.
+        const isAnytingSelected = this.props.itemArray.find( obj => obj.isChecked === true ); //Check if "itemArray" in Redux Store current state for anything that has been selected. ".find" will return the first object that has "isChecked = true", otherwise 'undefined' will be returned.
         if ( !isAnytingSelected ) { //If "isAnythingSelected" is falsy (i.e. ".find" returned 'undefined', which is a falsy value), tell user to select an item
             this.toast('Select an item to remove!');
         } else { //enter block if "isAnythingSelected" is truthy (i.e. ".find" returned an object)
-        const updatedItemArray = this.state.itemArray.filter( obj => obj.isChecked === false ); //Make a copy of the "itemArray" in state, rename it "updatedItemArray", filters the"updateItemArray" (which at this point is what is currently in state) for all objects that have "isChecked" property as "false". This returns an array of objects that do not have their check boxes marked.
-        this.setState({itemArray: updatedItemArray}, ()=>{this.storeData(this.state.itemArray, 'itemArray')}); //replace the current "itemArray" in state with the "updatedItemArray" i.e. an array of all items that are unchecked. After that operation is completed, execute the callback function which stores the "itemArray" in state under the key 'itemArray'.
+            let itemIdsToDeleteArray = []; //Initialize an array that will hold the 'id's of all the items that have been checked for deletion. Want the id's because the Action Creator will be calling 'fetch' with DELETE which requires the 'id'.
+            for (itemObject of this.props.itemArray) { //Iterate through the 'itemArray' in the Redux Store current state, name each object that is being iterated over "itemObject".
+                if (itemObject.isChecked === true) { //if the 'itemObject' currently being iterated over is marked for deletion, enter the code block which adds the "itemObject"s 'id' to the "itemIdsToDeleteArray" for use in the Action Creator's 'fetch' DELETE call
+                    itemIdsToDeleteArray.push(itemObject.id)
+                }
+            }
+            this.props.removeItemsSubmit(itemIdsToDeleteArray); //After 'for' loop above is finished, 'itemIdsToDeleteArray' array will contain the 'id's of all items that are to be deleted, and this line will pass the array to teh 'removeItemsSubmit' Action Creator. 
         }
     }
 
